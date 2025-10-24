@@ -52,7 +52,7 @@ public class Team {
         this.creationYear = creationYear;
     }
 
-    public ArrayList<Player> getJugadores() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 

@@ -2,13 +2,13 @@ package com.ephmos.SoccerApp;
 
 public class Player {
     String name;
-    String lastname1;
+    String lastname;
     int age;
     Positions position;
     int goalsNumber;
-    public Player(String name, String lastname1, int age, Positions position, int goalsNumber) {
+    public Player(String name, String lastname, int age, Positions position, int goalsNumber) {
         this.name = name;
-        this.lastname1 = lastname1;
+        this.lastname = lastname;
         this.age = age;
         this.position = position;
         this.goalsNumber = goalsNumber;
@@ -26,14 +26,14 @@ public class Player {
     }
 
     public String getLastname1() {
-        return lastname1;
+        return lastname;
     }
 
-    public void setLastname1(String lastname1) {
-        if (lastname1 == null || lastname1.trim().isEmpty()) {
+    public void setLastname(String lastname) {
+        if (lastname == null || lastname.trim().isEmpty()) {
             throw new IllegalArgumentException("el primer apellido esta vacio");
         }
-        this.lastname1 = lastname1.trim();
+        this.lastname = lastname.trim();
     }
 
     public int getAge() {
@@ -73,7 +73,7 @@ public class Player {
     public String toString() {
         return "Jugador{"
                 + "name='" + name + '\''
-                + ", lastname1='" + lastname1 + '\''
+                + ", lastname1='" + lastname + '\''
                 + ", age=" + age
                 + ", position=" + position
                 + ", goalsNumber=" + goalsNumber
