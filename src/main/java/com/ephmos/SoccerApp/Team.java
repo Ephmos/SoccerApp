@@ -9,6 +9,7 @@ public class Team {
     String stadium;
     int creationYear;
     ArrayList<Player> players;
+
     public Team(String name, String stadium, int creationYear, ArrayList<Player> players) {
         this.name = name;
         this.stadium = stadium;
