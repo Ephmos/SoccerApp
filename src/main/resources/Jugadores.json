@@ -1,5 +1,5 @@
 {
-"jugadores": [
+"Players": [
 { "name": "Marc-André", "lastname1": "ter Stegen", "age": 33, "position": "GK", "goalsNumber": 0 },
 { "name": "Iñaki", "lastname1": "Peña", "age": 26, "position": "GK", "goalsNumber": 0 },
 { "name": "Ronald", "lastname1": "Araujo", "age": 26, "position": "DEF", "goalsNumber": 1 },
