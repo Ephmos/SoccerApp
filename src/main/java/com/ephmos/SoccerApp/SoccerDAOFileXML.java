@@ -19,9 +19,9 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     boolean enName = false;
     boolean enLastname= false;
     boolean enAge=false;
-    boolean onPosition=false;
-    boolean onGoalsNumber=false;
-    boolean onTeam= false;
+    boolean enPosition=false;
+    boolean enGoalsNumber=false;
+    boolean enTeam= false;
 
 
 
@@ -65,32 +65,38 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
                              Attributes attributes) throws SAXException {
         System.out.println("\tPrincipio Elemento:" + qName);
     }*/
-    @Override
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("player")) {
             jugador = new Player();
-            if(attributes.getValue("lesionado").equalsIgnoreCase("sí")) {
-                lesionado = true;
-            }
-            jugador.setLesionado(lesionado);
         }
-        else if (qName.equalsIgnoreCase("nombre")) {
-            enName = true;
+        if(qName.equalsIgnoreCase("name")) {
+            enName=true;
         }
-        else if (qName.equalsIgnoreCase("numero")) {
-            enNumero = true;
+        else if (qName.equalsIgnoreCase("lastname")) {
+            enLastname = true;
         }
-        else if (qName.equalsIgnoreCase("fechaContrato")) {
-            enFecha = true;
+        else if (qName.equalsIgnoreCase("age")) {
+            enAge = true;
+        }
+        else if (qName.equalsIgnoreCase("position")) {
+            enPosition = true;
+        } else if (qName.equalsIgnoreCase("goalsnumber")) {
+            enGoalsNumber = true;
+        }
+        else if (qName.equalsIgnoreCase("team")) {
+            enTeam = true;
         }
     }
     @Override
     public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        System.out.println("\tFin Elemento:" + qName);
+        if (qName.equalsIgnoreCase("jugador")) {
+            listaJugadores.add(jugador);
+            System.out.println("\tFin Elemento:" + qName)
+        }
     }
-
+    ;
     @Override
     public List<Player> readPlayer(String name) throws IOException {
         return List.of();

@@ -1,19 +1,27 @@
 package com.ephmos.SoccerApp;
 
-public class Player {
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+public class Player implements Externalizable {
     String name;
     String lastname;
     int age;
     Positions position;
     int goalsNumber;
     String team;
-    public Player(String name, String lastname, int age, Positions position, int goalsNumber, String team) {
+    public Player(String name, String lastname, int age, Positions position, int goalsNumber, String team)  {
         this.name = name;
         this.lastname = lastname;
         this.age = age;
         this.position = position;
         this.goalsNumber = goalsNumber;
         this.team = team;
+    }
+
+    public Player() {
     }
 
     public String getName() {
@@ -80,5 +88,15 @@ public class Player {
                 + ", position=" + position
                 + ", goalsNumber=" + goalsNumber
                 + '}';
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
     }
 }
