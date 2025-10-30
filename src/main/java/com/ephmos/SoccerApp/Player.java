@@ -6,12 +6,14 @@ public class Player {
     int age;
     Positions position;
     int goalsNumber;
-    public Player(String name, String lastname, int age, Positions position, int goalsNumber) {
+    String team;
+    public Player(String name, String lastname, int age, Positions position, int goalsNumber, String team) {
         this.name = name;
         this.lastname = lastname;
         this.age = age;
         this.position = position;
         this.goalsNumber = goalsNumber;
+        this.team = team;
     }
 
     public String getName() {
@@ -20,18 +22,18 @@ public class Player {
 
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("el nombre esta vacio");
+            throw new IllegalArgumentException("El nombre está vacío");
         }
         this.name = name.trim();
     }
 
-    public String getLastname1() {
+    public String getLastname() {
         return lastname;
     }
 
     public void setLastname(String lastname) {
         if (lastname == null || lastname.trim().isEmpty()) {
-            throw new IllegalArgumentException("el primer apellido esta vacio");
+            throw new IllegalArgumentException("El apellido está vacío");
         }
         this.lastname = lastname.trim();
     }
@@ -53,7 +55,7 @@ public class Player {
 
     public void setPosition(Positions position) {
         if (position == null) {
-            throw new IllegalArgumentException("Debe tener una posicion");
+            throw new IllegalArgumentException("Debe tener una posición");
         }
         this.position = position;
     }
@@ -64,7 +66,7 @@ public class Player {
 
     public void setGoalsNumber(int goalsNumber) {
         if (goalsNumber < 0) {
-            throw new IllegalArgumentException("el numero de goles no puede ser negativo");
+            throw new IllegalArgumentException("El número de goles no puede ser negativo");
         }
         this.goalsNumber = goalsNumber;
     }
@@ -73,7 +75,7 @@ public class Player {
     public String toString() {
         return "Jugador{"
                 + "name='" + name + '\''
-                + ", lastname1='" + lastname + '\''
+                + ", lastname='" + lastname + '\''
                 + ", age=" + age
                 + ", position=" + position
                 + ", goalsNumber=" + goalsNumber

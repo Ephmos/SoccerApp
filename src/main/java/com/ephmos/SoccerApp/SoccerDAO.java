@@ -1,6 +1,5 @@
 package com.ephmos.SoccerApp;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,14 +9,14 @@ public interface SoccerDAO {
      *
      * @return true si el fichero está vacío
      */
-    Boolean isEmpty() throws FileNotFoundException, IOException;
+    Boolean isEmpty();
 
     /**
      * Comprobar si el fichero está lleno.
      *
      * @return true si el fichero está lleno
      */
-    Boolean isFull() throws FileNotFoundException, IOException;
+    Boolean isFull();
 
     /**
      * Para añadir un jugador al fichero.
@@ -46,50 +45,14 @@ public interface SoccerDAO {
      * @param name Nombre del jugador a leer
      * @return Jugador leído
      */
-    List<Player> readPlayer(String name);
+    List<Player> readPlayer(String name) throws IOException;
 
     /**
      * Para actualizar un jugador del fichero.
      *
      * @param player Jugador a actualizar
      */
-    void updatePlayer(Player player);
-
-    /**
-     * Para añadir un equipo al fichero.
-     *
-     * @param team Equipo a añadir
-     */
-    void addTeam(Team team);
-
-    /**
-     * Para eliminar un equipo del fichero.
-     *
-     * @param team Equipo a eliminar
-     */
-    void deleteTeam(Team team);
-
-    /**
-     * Para leer todos los equipos del fichero.
-     *
-     * @return Lista con todos los equipos
-     */
-    List<Team> readTeams();
-
-    /**
-     * Para leer un equipo del fichero.
-     *
-     * @param name Equipo a leer
-     * @return Equipo leído
-     */
-    List<Team> readTeam(String name);
-
-    /**
-     * Para actualizar un equipo del fichero.
-     *
-     * @param team Equipo a actualizar
-     */
-    void updateTeam(Team team);
+    void updatePlayer(Player player) throws IOException;
 
     /**
      * Para mostrar los máximos goleadores de la liga.
@@ -104,7 +67,7 @@ public interface SoccerDAO {
      * @param team Equipo a buscar
      * @return Devuelva el máximo goleador del equipo
      */
-    Player findTopScorer(Team team);
+    Player findTopScorer(String team);
 
     /**
      * Para mostrar todos los jugadores en una posicion determinada.
@@ -144,14 +107,16 @@ public interface SoccerDAO {
     List<Player> sortByAge();
 
     /**
-     * Para exportar la información de un jugador a un fichero CSV.
-     * @param players Lista de jugadores a exportar.
+     * Para obtener todos los jugadores de un equipo
+     *
+     * @return Lista de jugadores de un equipo
+     * @param team Equipo
      */
-    void exportPlayersToCSV(List<Player> players);
+    List<Player> sortByTeam(String team);
 
     /**
-     * Para exportar la información de un equipo a un fichero CSV.
-     * @param team Lista de equipos a exportar.
+     * Para exportar la información de los jugadores a los ficheros de almacenamiento.
+     * @param players Lista de jugadores a exportar.
      */
-    void exportTeamsToCSV(List<Team> team);
+    void exportPlayersToDataStorage(List<Player> players);
 }
