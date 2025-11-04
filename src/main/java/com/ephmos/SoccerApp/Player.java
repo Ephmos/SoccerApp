@@ -79,15 +79,24 @@ public class Player implements Externalizable {
         this.goalsNumber = goalsNumber;
     }
 
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
+    }
+
     @Override
     public String toString() {
-        return "Jugador{"
-                + "name='" + name + '\''
-                + ", lastname='" + lastname + '\''
-                + ", age=" + age
-                + ", position=" + position
-                + ", goalsNumber=" + goalsNumber
-                + '}';
+        return "Player{" +
+                "name='" + name + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", age=" + age +
+                ", position=" + position +
+                ", goalsNumber=" + goalsNumber +
+                ", team='" + team + '\'' +
+                '}';
     }
 
     @Override

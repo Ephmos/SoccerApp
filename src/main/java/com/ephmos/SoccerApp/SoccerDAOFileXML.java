@@ -1,19 +1,16 @@
 package com.ephmos.SoccerApp;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
+    //VALORES QUE NECESITAREMOS
+    private long maxBytes= 52428800;
+    private String file;
     private List <Player> listaJugadores = null;
     private Player jugador = null;
     boolean enName = false;
@@ -22,37 +19,104 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     boolean enPosition=false;
     boolean enGoalsNumber=false;
     boolean enTeam= false;
+    //GETERS Y SETERS DE LAS LISTAS
+    public List<Player> getListaJugadores() {
+        return listaJugadores;
+    }
 
+    public void setListaJugadores(List<Player> listaJugadores) {
+        this.listaJugadores = listaJugadores;
+    }
 
+    public SoccerDAOFileXML(String file) {
+        this.file = file;
+    }
 
     @Override
-    public Boolean isEmpty() {
-        return null;
+    public Boolean isEmpty() throws IOException {
+        //creamos variable que nos dirá si esta o no Vacio
+        boolean isEmpty=false;
+        try {
+            //creamos el archivo
+            File file = new File(this.file);
+            //comprobamos si existe(comprueba que no existe)
+            if (!file.exists()){
+                isEmpty = true;
+            }
+            //si existe comprobamos que no este vacio(se podria hacer comprobando el tamaño tambien)
+            else{
+                //abrimos un buffered reader que lee la linea
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    //si la primera linea esta vacia isEmpty pasaria a true
+                    isEmpty= br.readLine() == null;
+                }
+            }
+        } catch (IOException e) {
+            //si se da un problema de lectura o escritura lo lanzamos
+           throw new IOException(e);
+        }
+        //retorna el resultado de la variable
+        return isEmpty;
     }
 
     @Override
     public Boolean isFull() {
-        return null;
+        //creamos la variable y la inicializamos a false
+        boolean isFull = false;
+        File file = new File(this.file);
+        //si no exite no puede estar vacia
+        if (!file.exists()){
+            isFull = false;
+        }
+        //si el tamaño del archivo es igual o superior a maxBytes la variable pasa a true
+        //file.length() retorna el tamaño en bytes
+        if(file.length() >= maxBytes){
+            isFull = true;
+        }
+        //retorna el valor
+        return isFull;
     }
 
     @Override
     public void addPlayer(Player name) {
-
+        //comprobamos que el fichero no este lleno
+        File file = new File(this.file);
+        if(!this.isFull()){
+            //cargamos a la lista los jugadores con el metodo readPlayers
+            listaJugadores=readPlayers();
+            //añadimos al final el jugaodor que queremos añadir
+            listaJugadores.add(name);
+            //los cargamos al archivo
+            exportPlayersToDataStorage(listaJugadores);
+        }
     }
 
     @Override
     public void deletePlayer(Player name) {
-
+        //cargamos a la lista los jugadores con el metodo readPlayers
+        listaJugadores=readPlayers();
+        //eliminamos jugador, es necesario crear un iterador para eliminarlo(lo vimos el año pasado en clase)
+        for (Iterator<Player> it = listaJugadores.iterator(); it.hasNext(); ) {
+            Player p = it.next();
+            //si cuadra el nombre, apellido y edad (mala suerte seria que exitiesen dos jugadores iguales)
+            if (p.getName().equals(name.getName()) && p.getName().equals(name.getName()) && p.getAge()==name.getAge()) {
+                it.remove();
+            }
+        }
+        //los cargamos al archivo
+        exportPlayersToDataStorage(listaJugadores);
     }
 
     @Override
     public List<Player> readPlayers()  {
-        List <Player> listaJugadores = null;
-        Player player1 = null;
 
-        return List.of();
+        //descomentar lo de abajo
+       // List <Player> listaJugadores = null
+        // Player player1 = null;
+        // PARA HACER PRUEBAS->
+        return listaJugadores;
     }
-    public void startDocument()  throws SAXException {
+    /*public void startDocument()  throws SAXException {
         listaJugadores = new ArrayList <Player> ();
         System.out.println("Comienzo del documento XML");
     }
@@ -64,13 +128,13 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     /*public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
         System.out.println("\tPrincipio Elemento:" + qName);
-    }*/
+    }
     public void startElement(String uri, String localName, String qName,
                              Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase("player")) {
             jugador = new Player();
         }
-        if(qName.equalsIgnoreCase("name")) {
+        else if(qName.equalsIgnoreCase("name")) {
             enName=true;
         }
         else if (qName.equalsIgnoreCase("lastname")) {
@@ -93,18 +157,30 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
             throws SAXException {
         if (qName.equalsIgnoreCase("jugador")) {
             listaJugadores.add(jugador);
-            System.out.println("\tFin Elemento:" + qName)
+            System.out.println("\tFin Elemento:" + qName);
         }
-    }
-    ;
+    }*/
+
     @Override
     public List<Player> readPlayer(String name) throws IOException {
         return List.of();
     }
 
     @Override
-    public void updatePlayer(Player player) throws IOException {
-
+    public void updatePlayer(Player name) throws IOException {
+        //cargamos a la lista los jugadores con el metodo readPlayers
+        listaJugadores=readPlayers();
+        //actualizamos un jugador
+        for (Player p:listaJugadores) {
+            if (p.getName().equals(name.getName()) && p.getLastname().equals(name.getLastname())) {
+                p.setAge(name.getAge());
+                p.setPosition(name.getPosition());
+                p.setGoalsNumber(name.getGoalsNumber());
+                p.setTeam(name.getTeam());
+            }
+        }
+        //los cargamos al archivo
+        exportPlayersToDataStorage(listaJugadores);
     }
 
     @Override
@@ -149,10 +225,71 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public void exportPlayersToDataStorage(List<Player> players) {
-
+        //para probar simplemente va a leer
+        for (Player player : players) {
+            System.out.println(player.toString());
+        }
     }
     public static void main(String[] args) {
+        //MAIN DE PRUEBAS
+        ArrayList<Player> players = new ArrayList<>();
 
+        // FC Barcelona (5)
+        players.add(new Player("Marc-André", "ter Stegen", 33, Positions.GK, 0, "FC Barcelona"));
+        players.add(new Player("Ronald", "Araujo", 26, Positions.DEF, 1, "FC Barcelona"));
+        players.add(new Player("Pedri", "González", 22, Positions.MF, 3, "FC Barcelona"));
+        players.add(new Player("Lamine", "Yamal", 17, Positions.FWD, 7, "FC Barcelona"));
+        players.add(new Player("Robert", "Lewandowski", 36, Positions.FWD, 19, "FC Barcelona"));
+
+        // Real Madrid (5)
+        players.add(new Player("Thibaut", "Courtois", 33, Positions.GK, 0, "Real Madrid"));
+        players.add(new Player("Antonio", "Rüdiger", 32, Positions.DEF, 2, "Real Madrid"));
+        players.add(new Player("Jude", "Bellingham", 21, Positions.MF, 19, "Real Madrid"));
+        players.add(new Player("Vinícius", "Júnior", 25, Positions.FWD, 15, "Real Madrid"));
+        players.add(new Player("Kylian", "Mbappé", 26, Positions.FWD, 21, "Real Madrid"));
+
+        // Atlético de Madrid (5)
+        players.add(new Player("Jan", "Oblak", 32, Positions.GK, 0, "Atlético de Madrid"));
+        players.add(new Player("José María", "Giménez", 30, Positions.DEF, 1, "Atlético de Madrid"));
+        players.add(new Player("Marcos", "Llorente", 30, Positions.MF, 6, "Atlético de Madrid"));
+        players.add(new Player("Antoine", "Griezmann", 34, Positions.FWD, 16, "Atlético de Madrid"));
+        players.add(new Player("Álvaro", "Morata", 32, Positions.FWD, 15, "Atlético de Madrid"));
+
+        // Muestra por consola
+        players.forEach(System.out::println);
+        System.out.println("Total jugadores: " + players.size());
+        //CREACION DE OBJETO
+        // File file1 = new File("Jugadores.xml");
+        //File file2 = new File("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
+        //System.out.println(file2.exists());
+        SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
+        //COMPROBAMOS SI EL FICHERO ESTA LLENO O VACIO
+        System.out.println("Esta llena?");
+        System.out.println(prueba1.isFull());
+        try {
+            System.out.println("Esta vacia?");
+            System.out.println(prueba1.isEmpty());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //CARGAMOS LA LISTA
+        prueba1.setListaJugadores(players);
+        //COMPROBAMOS QUE SE HAN CARGADO
+        for (Player p :prueba1.getListaJugadores()) {
+            System.out.println(p);
+        }
+        prueba1.addPlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
+        System.out.println("");
+        prueba1.addPlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "Real Madrid"));
+        System.out.println("");
+        prueba1.deletePlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
+        System.out.println("");
+        try {
+            prueba1.updatePlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "FC Barcelona"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
 }

@@ -9,7 +9,7 @@ public interface SoccerDAO {
      *
      * @return true si el fichero está vacío
      */
-    Boolean isEmpty();
+    Boolean isEmpty() throws IOException;
 
     /**
      * Comprobar si el fichero está lleno.
