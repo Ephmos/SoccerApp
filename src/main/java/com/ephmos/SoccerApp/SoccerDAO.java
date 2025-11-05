@@ -67,7 +67,7 @@ public interface SoccerDAO {
      * @param team Equipo a buscar
      * @return Devuelva el máximo goleador del equipo
      */
-    Player findTopScorer(String team);
+    List<Player> findTopScorer(String team);
 
     /**
      * Para mostrar todos los jugadores en una posicion determinada.

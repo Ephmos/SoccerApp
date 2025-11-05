@@ -3,7 +3,6 @@ package com.ephmos.SoccerApp;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class SoccerDAOFileJSON implements SoccerDAO{
     }
 
     @Override
-    public Player findTopScorer(String team) {
+    public List<Player> findTopScorer(String team) {
         return null;
     }
 

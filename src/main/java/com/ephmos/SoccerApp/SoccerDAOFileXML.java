@@ -185,12 +185,48 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public List<Player> findTopScorers() {
-        return List.of();
+        // variable para guardar el maximo goleador
+        int numeroGoles=0;
+        //lista para añadir las coincidencias con el maximo goleador
+        List<Player> maximosGoleadores= new ArrayList<>();
+        //cargamos a la lista los jugadores con el metodo readPlayers
+        listaJugadores=readPlayers();
+        //recorremos la lista para obtener el dato mas alto de goles
+         for (Player p:listaJugadores) {
+            if(p.getGoalsNumber()>numeroGoles){
+                numeroGoles=p.getGoalsNumber();
+            }
+         }
+         // buscamos en la lista los jugadores que tengan ese numero de goles
+         for (Player p:listaJugadores) {
+             if(p.getGoalsNumber()==numeroGoles){
+                 maximosGoleadores.add(p);
+             }
+         }
+        return maximosGoleadores;
     }
 
     @Override
-    public Player findTopScorer(String team) {
-        return null;
+    public List<Player> findTopScorer(String team) {
+        // variable para guardar el maximo goleador
+        int numeroGoles=0;
+        //lista para añadir las coincidencias con el maximo goleador
+        List<Player> maximosGoleadores= new ArrayList<>();
+        //cargamos los jugadores
+        listaJugadores=readPlayers();
+        //recorremos la lista para obtener el dato mas alto de goles de el equipo
+        for (Player p:listaJugadores) {
+            if(p.getTeam().equals(team) && p.getGoalsNumber()>numeroGoles) {
+                numeroGoles = p.getGoalsNumber();
+            }
+        }
+        // buscamos en la lista los jugadores que tengan ese numero de goles
+        for (Player p:listaJugadores) {
+            if(p.getGoalsNumber()==numeroGoles && p.getTeam().equals(team)){
+                maximosGoleadores.add(p);
+            }
+        }
+        return maximosGoleadores;
     }
 
     @Override
@@ -289,7 +325,17 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("");
+        System.out.println("Top scorers");
+        prueba1.findTopScorers().forEach(System.out::println);
+        System.out.println("");
+        System.out.println("Top scorers from barsa");
+        prueba1.findTopScorer("FC Barcelona").forEach(System.out::println);
+        System.out.println("");
+        System.out.println("Top scorers from atleti");
+        prueba1.findTopScorer("Atlético de Madrid").forEach(System.out::println);
     }
+
 
 
 }
