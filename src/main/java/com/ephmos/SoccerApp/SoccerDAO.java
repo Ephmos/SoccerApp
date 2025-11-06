@@ -88,9 +88,9 @@ public interface SoccerDAO {
      * Para contar el número de jugadores en una posición determinada.
      *
      * @param position Posición a buscar
-     * @return Devuelve la edad promedio de los jugadores en esa posición
+     * @return Devuelve una lista de jugadores en una posicion determinada
      */
-    double getAverageAge(Positions position);
+    List<Player> getPlayersByPosition(Positions position);
 
     /**
      * Para ordenar los jugadores por apellidos.

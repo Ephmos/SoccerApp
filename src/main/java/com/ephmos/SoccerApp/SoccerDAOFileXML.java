@@ -240,8 +240,8 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public double getAverageAge(Positions position) {
-        return 0;
+    public List<Player> getPlayersByPosition(Positions position) {
+        return List.of();
     }
 
     @Override
