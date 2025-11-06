@@ -236,12 +236,35 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public double getAverageAge() {
-        return 0;
+        //generamos una variable que almacenará las edades de los jugadores y
+        // posteriormente almacenará la edad promedio
+        double edadpromedio=0;
+        //cargamos la lista
+        listaJugadores= readPlayers();
+        //recorremos la lista para almacenar las edades
+        for (Player p:listaJugadores) {
+            edadpromedio+=p.getAge();
+        }
+        //hacemos la division por el numero de jugadores para sacar la media
+        edadpromedio=edadpromedio/listaJugadores.size();
+        //retornamos la media
+        return edadpromedio;
     }
 
     @Override
     public List<Player> getPlayersByPosition(Positions position) {
-        return List.of();
+        //cargamos la lista
+        listaJugadores= readPlayers();
+        //generamos otra lista en la que almacenaremos los jugadores de la posicion determinada
+        List<Player> playersByPosition= new ArrayList<>();
+        //recorremos la lista para almacenar los jugadores que sean de una determinada posicion
+        for (Player p:listaJugadores) {
+            if (p.getPosition().equals(position)) {
+                playersByPosition.add(p);
+            }
+        }
+        //retornamos la lista de los jugadores por posicion
+        return playersByPosition;
     }
 
     @Override
@@ -334,6 +357,12 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         System.out.println("");
         System.out.println("Top scorers from atleti");
         prueba1.findTopScorer("Atlético de Madrid").forEach(System.out::println);
+        System.out.println("");
+        System.out.println("Edad promedio "+prueba1.getAverageAge());
+        System.out.println("");
+        prueba1.getPlayersByPosition(Positions.MF).forEach(System.out::println);
+
+
     }
 
 
