@@ -83,7 +83,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         File file = new File(this.file);
         if(!this.isFull()){
             //cargamos a la lista los jugadores con el metodo readPlayers
-            listaJugadores=readPlayers();
+            listaJugadores=readAllPlayers();
             //añadimos al final el jugaodor que queremos añadir
             listaJugadores.add(name);
             //los cargamos al archivo
@@ -94,7 +94,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     @Override
     public void deletePlayer(Player name) {
         //cargamos a la lista los jugadores con el metodo readPlayers
-        listaJugadores=readPlayers();
+        listaJugadores=readAllPlayers();
         //eliminamos jugador, es necesario crear un iterador para eliminarlo(lo vimos el año pasado en clase)
         for (Iterator<Player> it = listaJugadores.iterator(); it.hasNext(); ) {
             Player p = it.next();
@@ -108,7 +108,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> readPlayers()  {
+    public List<Player> readAllPlayers()  {
 
         //descomentar lo de abajo
        // List <Player> listaJugadores = null
@@ -116,7 +116,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         // PARA HACER PRUEBAS->
         return listaJugadores;
     }
-    /*public void startDocument()  throws SAXException {
+    /*public void startDocument() throws SAXException {
         listaJugadores = new ArrayList <Player> ();
         System.out.println("Comienzo del documento XML");
     }
@@ -162,14 +162,14 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }*/
 
     @Override
-    public Player readPlayer(String name) throws IOException {
-        return new Player();
+    public List<Player> readPlayers(String name) throws IOException {
+        return List.of();
     }
 
     @Override
     public void updatePlayer(Player name) throws IOException {
         //cargamos a la lista los jugadores con el metodo readPlayers
-        listaJugadores=readPlayers();
+        listaJugadores=readAllPlayers();
         //actualizamos un jugador
         for (Player p:listaJugadores) {
             if (p.getName().equals(name.getName()) && p.getLastname().equals(name.getLastname())) {
@@ -190,7 +190,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         //lista para añadir las coincidencias con el maximo goleador
         List<Player> maximosGoleadores= new ArrayList<>();
         //cargamos a la lista los jugadores con el metodo readPlayers
-        listaJugadores=readPlayers();
+        listaJugadores=readAllPlayers();
         //recorremos la lista para obtener el dato mas alto de goles
          for (Player p:listaJugadores) {
             if(p.getGoalsNumber()>numeroGoles){
@@ -213,7 +213,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         //lista para añadir las coincidencias con el maximo goleador
         List<Player> maximosGoleadores= new ArrayList<>();
         //cargamos los jugadores
-        listaJugadores=readPlayers();
+        listaJugadores=readAllPlayers();
         //recorremos la lista para obtener el dato mas alto de goles de el equipo
         for (Player p:listaJugadores) {
             if(p.getTeam().equals(team) && p.getGoalsNumber()>numeroGoles) {
@@ -240,7 +240,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         // posteriormente almacenará la edad promedio
         double edadpromedio=0;
         //cargamos la lista
-        listaJugadores= readPlayers();
+        listaJugadores= readAllPlayers();
         //recorremos la lista para almacenar las edades
         for (Player p:listaJugadores) {
             edadpromedio+=p.getAge();
@@ -254,7 +254,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     @Override
     public List<Player> getPlayersByPosition(Positions position) {
         //cargamos la lista
-        listaJugadores= readPlayers();
+        listaJugadores= readAllPlayers();
         //generamos otra lista en la que almacenaremos los jugadores de la posicion determinada
         List<Player> playersByPosition= new ArrayList<>();
         //recorremos la lista para almacenar los jugadores que sean de una determinada posicion

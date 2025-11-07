@@ -12,8 +12,8 @@ public class Main {
         List<Player> players = new ArrayList<>();
         SoccerDAOFileJSON obj = new SoccerDAOFileJSON(file, players);
         try {
-            //System.out.println(obj.readPlayers());
-            //System.out.println(obj.readPlayer("Robertito"));
+            //System.out.println(obj.readAllPlayers());
+            System.out.println(obj.readPlayers("Antonio"));
         } catch (Exception exception) {
             throw new Exception(exception);
         }

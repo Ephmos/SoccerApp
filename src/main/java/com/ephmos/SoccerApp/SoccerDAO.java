@@ -2,6 +2,7 @@ package com.ephmos.SoccerApp;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface SoccerDAO {
     /**
@@ -37,7 +38,7 @@ public interface SoccerDAO {
      *
      * @return Lista con todos los jugadores
      */
-    List<Player> readPlayers() throws Exception;
+    List<Player> readAllPlayers() throws Exception;
 
     /**
      * Para leer un jugador del fichero.
@@ -45,7 +46,7 @@ public interface SoccerDAO {
      * @param name Nombre del jugador a leer
      * @return Jugador leído
      */
-    Player readPlayer(String name) throws Exception;
+    List<Player> readPlayers(String name) throws Exception;
 
     /**
      * Para actualizar un jugador del fichero.

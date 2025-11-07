@@ -13,12 +13,12 @@ public class Player implements Externalizable {
     int goalsNumber;
     String team;
     public Player(String name, String lastname, int age, Positions position, int goalsNumber, String team)  {
-        this.name = name;
-        this.lastname = lastname;
-        this.age = age;
-        this.position = position;
-        this.goalsNumber = goalsNumber;
-        this.team = team;
+        setName(name);
+        setLastname(lastname);
+        setAge(age);
+        setPosition(position);
+        setGoalsNumber(goalsNumber);
+        setTeam(team);
     }
 
     public Player() {
@@ -89,14 +89,19 @@ public class Player implements Externalizable {
 
     @Override
     public String toString() {
-        return "Player{" +
-                "name='" + name + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", age=" + age +
-                ", position=" + position +
-                ", goalsNumber=" + goalsNumber +
-                ", team='" + team + '\'' +
-                '}';
+        return String.format(
+                """
+                        
+                        
+                        Jugador {%n\
+                          name: %s %s%n\
+                          age: %d%n\
+                          position: %s%n\
+                          team: %s%n\
+                          goals: %d%n\
+                        }""",
+                name, lastname, age, position, team, goalsNumber
+        );
     }
 
     @Override

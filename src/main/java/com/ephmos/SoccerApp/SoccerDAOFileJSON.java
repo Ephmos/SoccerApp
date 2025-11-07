@@ -4,6 +4,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class SoccerDAOFileJSON implements SoccerDAO {
 
             return false;
         } catch (IOException exception) {
-            throw new IOException("I/O Exception has been occurred", exception);
+            throw new IOException("Ha ocurrido una excepción de entrada y salida", exception);
         }
     }
 
@@ -47,7 +48,7 @@ public class SoccerDAOFileJSON implements SoccerDAO {
 
             return file.length() >= MAX_FILE_SIZE;
         } catch (SecurityException exception) {
-            throw new SecurityException("SecurityException has been occurred", exception);
+            throw new SecurityException("Ha ocurrido una excepción de seguridad", exception);
         }
     }
 
@@ -62,8 +63,8 @@ public class SoccerDAOFileJSON implements SoccerDAO {
     }
 
     @Override
-    public List<Player> readPlayers() throws Exception {
-        try (Jsonb jsonb = JsonbBuilder.create(); FileReader fileReader = new FileReader(this.file)) {
+    public List<Player> readAllPlayers() throws Exception {
+        try (Jsonb jsonb = JsonbBuilder.create(); FileReader fileReader = new FileReader(this.file, StandardCharsets.ISO_8859_1)) {
             Player[] players = jsonb.fromJson(fileReader, Player[].class);
             this.players.addAll(Arrays.asList(players));
         } catch (IOException exception) {
@@ -76,20 +77,46 @@ public class SoccerDAOFileJSON implements SoccerDAO {
     }
 
     @Override
-    public Player readPlayer(String name) throws Exception {
-        try (Jsonb json = JsonbBuilder.create(); FileReader fileReader = new FileReader(this.file)) {
+    public List<Player> readPlayers(String name) throws Exception {
+        try (Jsonb json = JsonbBuilder.create(); FileReader fileReader = new FileReader(this.file, StandardCharsets.ISO_8859_1)) {
             Player[] players = json.fromJson(fileReader, Player[].class);
-            for (Player player : players) {
-                if (player.getName().equals(name)) {
-                    return player;
-                }
+            if (Arrays.stream(players).noneMatch(p -> p.getName().equals(name))) {
+                return null;
+            } else {
+                this.players.addAll(Arrays.stream(players).filter(player -> player.getName().equals(name)).toList());
+                return this.players;
             }
+        } catch (IOException exception) {
+            throw new IOException("Error leyendo jugadores del archivo", exception);
+        } catch (Exception exception) {
+            throw new Exception("Ha ocurrido un error al intentar recuperar los recursos asignados a uno de los elementos", exception);
         }
-        return null;
     }
 
+    /*
+    private <T> List<Player> readPlayers(Predicate<Player> filter) throws Exception {
+        try (Jsonb json = JsonbBuilder.create();
+             FileReader fileReader = new FileReader(this.file, StandardCharsets.UTF_8)) {
+            Player[] players = json.fromJson(fileReader, Player[].class);
+
+            if (players == null || players.length == 0) {
+                return new ArrayList<>();
+            }
+
+            List<Player> result = Arrays.stream(players)
+                    .filter(filter)
+                    .toList();
+
+            return result.isEmpty() ? new ArrayList<>() : result;
+        } catch (IOException exception) {
+            throw new IOException("Error leyendo jugadores del archivo", exception);
+        } catch (Exception exception) {
+            throw new Exception("Ha ocurrido un error al intentar recuperar los recursos asignados a uno de los elementos", exception);
+        }
+    }*/
+
     @Override
-    public void updatePlayer(Player player) throws IOException {
+    public void updatePlayer(Player player) {
 
     }
 
