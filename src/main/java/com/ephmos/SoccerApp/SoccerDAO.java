@@ -9,14 +9,14 @@ public interface SoccerDAO {
      *
      * @return true si el fichero está vacío
      */
-    Boolean isEmpty() throws IOException;
+    boolean isEmpty() throws IOException;
 
     /**
      * Comprobar si el fichero está lleno.
      *
      * @return true si el fichero está lleno
      */
-    Boolean isFull();
+    boolean isFull() throws IOException;
 
     /**
      * Para añadir un jugador al fichero.
@@ -37,7 +37,7 @@ public interface SoccerDAO {
      *
      * @return Lista con todos los jugadores
      */
-    List<Player> readPlayers();
+    List<Player> readPlayers() throws Exception;
 
     /**
      * Para leer un jugador del fichero.
@@ -45,7 +45,7 @@ public interface SoccerDAO {
      * @param name Nombre del jugador a leer
      * @return Jugador leído
      */
-    List<Player> readPlayer(String name) throws IOException;
+    Player readPlayer(String name) throws Exception;
 
     /**
      * Para actualizar un jugador del fichero.

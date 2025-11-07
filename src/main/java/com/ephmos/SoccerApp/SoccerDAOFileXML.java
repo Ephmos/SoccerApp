@@ -33,7 +33,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public Boolean isEmpty() throws IOException {
+    public boolean isEmpty() throws IOException {
         //creamos variable que nos dirá si esta o no Vacio
         boolean isEmpty=false;
         try {
@@ -60,7 +60,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public Boolean isFull() {
+    public boolean isFull() {
         //creamos la variable y la inicializamos a false
         boolean isFull = false;
         File file = new File(this.file);
@@ -162,8 +162,8 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }*/
 
     @Override
-    public List<Player> readPlayer(String name) throws IOException {
-        return List.of();
+    public Player readPlayer(String name) throws IOException {
+        return new Player();
     }
 
     @Override
