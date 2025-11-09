@@ -1,7 +1,18 @@
 package com.ephmos.SoccerApp;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -108,34 +119,48 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> readAllPlayers()  {
+    public List<Player> readAllPlayers() {
+        // Creamos un SAXParserFactory que se utilizarán para procesar el XML
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        saxParserFactory.setNamespaceAware(false);//****
+        try {
+            //Creamos un SAXParser, Este parser es el encargado de leer el archivo XML evento por evento
+            //(inicio/fin de elementos, caracteres...)
+            SAXParser saxParser = saxParserFactory.newSAXParser();
+            //creamos el tipo File para usarlo en el parser
+            File file= new File(this.file);
+            // Usamos 'this' porque nuestra clase ya extiende DefaultHandler
+            saxParser.parse(file, this);
+            // Retornamos la lista que se ha cargado durante el parseo
+            return listaJugadores;
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>(); // Retornamos lista vacía en caso de error
+        }
+    }
+    @Override
+    public void startDocument() throws SAXException {
+        //cuando comience el documento creamos la lista
+        listaJugadores = new ArrayList<Player>();
+    }
 
-        //descomentar lo de abajo
-       // List <Player> listaJugadores = null
-        // Player player1 = null;
-        // PARA HACER PRUEBAS->
-        return listaJugadores;
-    }
-    /*public void startDocument() throws SAXException {
-        listaJugadores = new ArrayList <Player> ();
-        System.out.println("Comienzo del documento XML");
-    }
     @Override
     public void endDocument() throws SAXException {
-        System.out.println("Final del documento XML");
+        //añadimos un mensaje de "Fin de documento"
+        //lo he comentado porque sino cada vez que lee el documento lo imprime
+        //System.out.println("Fin de documento");
     }
+
     @Override
-    /*public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
-        System.out.println("\tPrincipio Elemento:" + qName);
-    }
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        //este metodo se usa cada vez que se comienza un elemento
+        //cuando se crea un "player inicia un objeto de tipo Player para asignarle sus atributos"
         if (qName.equalsIgnoreCase("player")) {
             jugador = new Player();
         }
+        //los metodos de abajo se utilizan para saber cuando estamos en un campo determinado
         else if(qName.equalsIgnoreCase("name")) {
-            enName=true;
+            enName = true;
         }
         else if (qName.equalsIgnoreCase("lastname")) {
             enLastname = true;
@@ -145,25 +170,87 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
         else if (qName.equalsIgnoreCase("position")) {
             enPosition = true;
-        } else if (qName.equalsIgnoreCase("goalsnumber")) {
+        }
+        else if (qName.equalsIgnoreCase("goalsNumber")) {
             enGoalsNumber = true;
         }
         else if (qName.equalsIgnoreCase("team")) {
             enTeam = true;
         }
     }
+
     @Override
-    public void endElement(String uri, String localName, String qName)
-            throws SAXException {
-        if (qName.equalsIgnoreCase("jugador")) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        //cuando se acabe el elemento  "player" queremos añadir el jugador que hemos generado en memoria
+        if (qName.equalsIgnoreCase("player")) {
             listaJugadores.add(jugador);
-            System.out.println("\tFin Elemento:" + qName);
         }
-    }*/
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        // Esta funcion se invoca cuando el parser encuentra CONTENIDO DE TEXTO dentro de etiquetas
+        // Parámetros:
+        // - ch: array de caracteres que contiene el contenido
+        // - start: posición de inicio del contenido en el array
+        // - length: cantidad de caracteres a procesar
+
+        // Convierte el array de caracteres(ch) a un String desde la posición 'start' con 'length' caracteres
+        // elimina espacios en blanco al inicio y final con trim()
+        String contenido = new String(ch, start, length).trim();
+
+        // Saltamos los elementos vacíos (espacios, saltos de línea, etc.)
+        if (contenido.isEmpty()) {
+            return;
+        }
+        //añadimos los atributos al objeto y ponemos false para saber donde estamos
+        try {
+            if (enName) {
+                jugador.setName(contenido);
+                enName = false;
+            } else if (enLastname) {
+                jugador.setLastname(contenido);
+                enLastname = false;
+            } else if (enAge) {
+                jugador.setAge(Integer.parseInt(contenido)); // solo aquí número
+                enAge = false;
+            } else if (enPosition) {
+                // Normaliza por si viniera en minúsculas en otros XML
+                jugador.setPosition(Positions.valueOf(contenido.toUpperCase()));
+                enPosition = false;
+            } else if (enGoalsNumber) {
+                jugador.setGoalsNumber(Integer.parseInt(contenido)); // solo aquí número
+                enGoalsNumber = false;
+            } else if (enTeam) {
+                jugador.setTeam(contenido);
+                enTeam = false;
+            }
+        }//excepcion por si falla algun campo saber porque
+        catch (IllegalArgumentException ex) {
+            //para saber el campo en el que falla
+            String campo = enAge ? "age" : enGoalsNumber ? "goalsNumber" : enPosition ? "position" :
+                    enName ? "name" : enLastname ? "lastname" : enTeam ? "team" : "desconocido";
+            //sacamos la excepcion
+            throw new SAXException("Valor inválido en el campo: "+ campo +" contenido: " + contenido, ex);
+        }
+    }
 
     @Override
     public List<Player> readPlayers(String name) throws IOException {
-        return List.of();
+        //cargamos los jugadores en la lista
+        listaJugadores=readAllPlayers();
+        //creamos una nueva lista para los jugadores creados
+        List Jugador_buscado = new ArrayList();
+        //recorremos la lista buscando coincidencias por nombre
+        for (Player p: listaJugadores) {
+            //si se da la condicion añadimos el jugador a la lista
+            if (p.getName().equals(name)) {
+                Jugador_buscado.add(p);
+            }
+        }
+        //retornamos la lista
+        return Jugador_buscado;
+
     }
 
     @Override
@@ -284,87 +371,81 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public void exportPlayersToDataStorage(List<Player> players) {
-        //para probar simplemente va a leer
-        for (Player player : players) {
-            System.out.println(player.toString());
+        try {
+            // Crear la fábrica y el constructor DOM para construir el documento XML
+            //DOM significa Document Object Model
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            // Crear un nuevo documento XML vacío en memoria
+            Document document = builder.newDocument();
+            // Crear el elemento raíz <players> contendrá todos los players
+            Element root = document.createElement("players");
+            //Colocar el elemento raíz dentro del documento
+            document.appendChild(root);
+
+            // Para cada jugador, crear la estructura XML <player> con sus hijos
+            //recorremos la lista pasada por parametro
+            for(Player player : players) {
+                //Creamos el elemento que agrupa los campos del jugador
+                Element playerElement = document.createElement("player");
+                //señalamos que es un hijo de "players"
+                root.appendChild(playerElement);
+
+                //creamos el campo "name" del jugador
+                Element name = document.createElement("name");
+                //escribimos el texto
+                name.appendChild(document.createTextNode(player.getName()));
+                //señalamos que es un hijo de "player"
+                playerElement.appendChild(name);
+
+
+                //HACEMOS LOS MISMO PARA TODOS LOS CAMPOS
+
+
+                Element lastname = document.createElement("lastname");
+                lastname.appendChild(document.createTextNode(player.getLastname()));
+                playerElement.appendChild(lastname);
+
+                Element age = document.createElement("age");
+                age.appendChild(document.createTextNode(String.valueOf(player.getAge())));
+                playerElement.appendChild(age);
+
+                Element position = document.createElement("position");
+                position.appendChild(document.createTextNode(player.getPosition().toString()));
+                playerElement.appendChild(position);
+
+                Element goalsNumber = document.createElement("goalsNumber");
+                goalsNumber.appendChild(document.createTextNode(String.valueOf(player.getGoalsNumber())));
+                playerElement.appendChild(goalsNumber);
+
+                Element team = document.createElement("team");
+                team.appendChild(document.createTextNode(player.getTeam()));
+                playerElement.appendChild(team);
+            }
+
+            // Crear el transformador que convertirá el documento DOM a archivo XML
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            //la salida al fichero
+            Transformer transformer = transformerFactory.newTransformer();
+            // Configurar propiedades para formato legible e indentado
+            //codificacion UTF-8
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            //que indentr
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            // Nivel de indentación
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+            // Crear fuente DOM y resultado de archivo
+            DOMSource source = new DOMSource(document);
+            //Destino de la transformación
+            StreamResult result = new StreamResult(this.file);
+            // Escribir el contenido al archivo XML (sobrescribiendo el archivo existente)
+            transformer.transform(source, result);
+            //errores
+        } catch (ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+            System.err.println("Error escribiendo el archivo XML.");
         }
     }
-    public static void main(String[] args) {
-        //MAIN DE PRUEBAS
-        ArrayList<Player> players = new ArrayList<>();
-
-        // FC Barcelona (5)
-        players.add(new Player("Marc-André", "ter Stegen", 33, Positions.GK, 0, "FC Barcelona"));
-        players.add(new Player("Ronald", "Araujo", 26, Positions.DEF, 1, "FC Barcelona"));
-        players.add(new Player("Pedri", "González", 22, Positions.MF, 3, "FC Barcelona"));
-        players.add(new Player("Lamine", "Yamal", 17, Positions.FWD, 7, "FC Barcelona"));
-        players.add(new Player("Robert", "Lewandowski", 36, Positions.FWD, 19, "FC Barcelona"));
-
-        // Real Madrid (5)
-        players.add(new Player("Thibaut", "Courtois", 33, Positions.GK, 0, "Real Madrid"));
-        players.add(new Player("Antonio", "Rüdiger", 32, Positions.DEF, 2, "Real Madrid"));
-        players.add(new Player("Jude", "Bellingham", 21, Positions.MF, 19, "Real Madrid"));
-        players.add(new Player("Vinícius", "Júnior", 25, Positions.FWD, 15, "Real Madrid"));
-        players.add(new Player("Kylian", "Mbappé", 26, Positions.FWD, 21, "Real Madrid"));
-
-        // Atlético de Madrid (5)
-        players.add(new Player("Jan", "Oblak", 32, Positions.GK, 0, "Atlético de Madrid"));
-        players.add(new Player("José María", "Giménez", 30, Positions.DEF, 1, "Atlético de Madrid"));
-        players.add(new Player("Marcos", "Llorente", 30, Positions.MF, 6, "Atlético de Madrid"));
-        players.add(new Player("Antoine", "Griezmann", 34, Positions.FWD, 16, "Atlético de Madrid"));
-        players.add(new Player("Álvaro", "Morata", 32, Positions.FWD, 15, "Atlético de Madrid"));
-
-        // Muestra por consola
-        players.forEach(System.out::println);
-        System.out.println("Total jugadores: " + players.size());
-        //CREACION DE OBJETO
-        // File file1 = new File("Jugadores.xml");
-        //File file2 = new File("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
-        //System.out.println(file2.exists());
-        SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
-        //COMPROBAMOS SI EL FICHERO ESTA LLENO O VACIO
-        System.out.println("Esta llena?");
-        System.out.println(prueba1.isFull());
-        try {
-            System.out.println("Esta vacia?");
-            System.out.println(prueba1.isEmpty());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //CARGAMOS LA LISTA
-        prueba1.setListaJugadores(players);
-        //COMPROBAMOS QUE SE HAN CARGADO
-        for (Player p :prueba1.getListaJugadores()) {
-            System.out.println(p);
-        }
-        prueba1.addPlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
-        System.out.println("");
-        prueba1.addPlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "Real Madrid"));
-        System.out.println("");
-        prueba1.deletePlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
-        System.out.println("");
-        try {
-            prueba1.updatePlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "FC Barcelona"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("");
-        System.out.println("Top scorers");
-        prueba1.findTopScorers().forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Top scorers from barsa");
-        prueba1.findTopScorer("FC Barcelona").forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Top scorers from atleti");
-        prueba1.findTopScorer("Atlético de Madrid").forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Edad promedio "+prueba1.getAverageAge());
-        System.out.println("");
-        prueba1.getPlayersByPosition(Positions.MF).forEach(System.out::println);
-
-
-    }
-
-
-
 }
