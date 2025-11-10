@@ -7,6 +7,7 @@ import com.ephmos.SoccerApp.SoccerDAOFileXML;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
+       /* String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
         Jsonb jsonb = JsonbBuilder.create();
         List<Player> players = new ArrayList<>();
         SoccerDAOFileJSON obj = new SoccerDAOFileJSON(jsonb, file, players);
@@ -24,7 +25,7 @@ public class Main {
 
         } catch (Exception exception) {
             throw new Exception(exception);
-        }
+        }*/
         /*
         SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
         System.out.println("Esta llena?");
@@ -63,5 +64,41 @@ public class Main {
         System.out.println("Edad promedio "+prueba1.getAverageAge());
         System.out.println("");
         prueba1.getPlayersByPosition(Positions.MF).forEach(System.out::println);*/
+
+
+        //LLAMADAS AL SISTEMA
+        //generarArchivo("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources","prueba1.txt");
+        //renombrarArchivo("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\JavierJaen.txt","prueba1.txt");
     }
+    //metodo que genera un archivo introduciendo una ruta y un nombre de directorio
+    public static void generarArchivo(String ruta, String nombreArchivo) throws IOException {
+        try {
+            //representamos el fichero
+            File file=new File(ruta,nombreArchivo);
+            //creamos el fichero
+            //si se crea lo muestra por consola
+            if(file.createNewFile()){
+                System.out.println("El archivo "+nombreArchivo+" se ha generado exitosamente");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException("no se pudo generar el archivo"+e);
+
+        }
+    }
+    public static void renombrarArchivo(String ruta, String nombreArchivo) throws IOException {
+        try{
+            //representamos el fcihero
+            File file= new File(ruta);
+            //sacamos la ruta
+            String padre= file.getParent();
+            //representamos el nuevo archivo
+            File Filereplace = new File(padre,nombreArchivo);
+            //hacemos un rename
+            file.renameTo(Filereplace);
+        } catch (Exception e) {
+        throw new IOException("no se pudo renombrar el archivo"+e);
+        }
+    }
+
 }
