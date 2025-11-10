@@ -74,22 +74,28 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     public boolean isFull() {
         //creamos la variable y la inicializamos a false
         boolean isFull = false;
-        File file = new File(this.file);
-        //si no exite no puede estar vacia
-        if (!file.exists()){
-            isFull = false;
+        try{
+
+            File file = new File(this.file);
+            //si no exite no puede estar vacia
+            if (!file.exists()){
+                isFull = false;
+            }
+            //si el tamaño del archivo es igual o superior a maxBytes la variable pasa a true
+            //file.length() retorna el tamaño en bytes
+            if(file.length() >= maxBytes){
+                isFull = true;
+            }
         }
-        //si el tamaño del archivo es igual o superior a maxBytes la variable pasa a true
-        //file.length() retorna el tamaño en bytes
-        if(file.length() >= maxBytes){
-            isFull = true;
+        catch (SecurityException exception) {
+            throw new SecurityException("Ha ocurrido una excepción de seguridad", exception);
         }
         //retorna el valor
         return isFull;
     }
 
     @Override
-    public void addPlayer(Player name) {
+    public void addPlayer(Player name) throws IOException {
         //comprobamos que el fichero no este lleno
         File file = new File(this.file);
         if(!this.isFull()){
@@ -103,7 +109,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void deletePlayer(Player name) {
+    public void deletePlayer(Player name) throws IOException {
         //cargamos a la lista los jugadores con el metodo readPlayers
         listaJugadores=readAllPlayers();
         //eliminamos jugador, es necesario crear un iterador para eliminarlo(lo vimos el año pasado en clase)
@@ -119,7 +125,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> readAllPlayers() {
+    public List<Player> readAllPlayers() throws IOException {
         // Creamos un SAXParserFactory que se utilizarán para procesar el XML
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         saxParserFactory.setNamespaceAware(false);//****
@@ -135,7 +141,8 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
             return listaJugadores;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
-            return new ArrayList<>(); // Retornamos lista vacía en caso de error
+            //return new ArrayList<>(); // Retornamos lista vacía en caso de error
+            throw new IOException("error de lectura o escritura",e); //lanzamos error de lectura o escritura
         }
     }
 
@@ -236,7 +243,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
     }
 
-    public List<Player> readPlayers(String name) {
+    public List<Player> readPlayers(String name) throws IOException {
         //cargamos los jugadores en la lista
         listaJugadores=readAllPlayers();
         //creamos una nueva lista para los jugadores creados
@@ -270,13 +277,13 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> findTopScorers() {
+    public List<Player> findTopScorers() throws IOException {
         // variable para guardar el maximo goleador
         int numeroGoles=0;
         //lista para añadir las coincidencias con el maximo goleador
         List<Player> maximosGoleadores= new ArrayList<>();
         //cargamos a la lista los jugadores con el metodo readPlayers
-        listaJugadores=readAllPlayers();
+            listaJugadores=readAllPlayers();
         //recorremos la lista para obtener el dato mas alto de goles
          for (Player p:listaJugadores) {
             if(p.getGoalsNumber()>numeroGoles){
@@ -293,7 +300,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> findTopScorer(String team) {
+    public List<Player> findTopScorer(String team) throws IOException {
         // variable para guardar el maximo goleador
         int numeroGoles=0;
         //lista para añadir las coincidencias con el maximo goleador
@@ -321,7 +328,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public double getAverageAge() {
+    public double getAverageAge() throws IOException {
         //generamos una variable que almacenará las edades de los jugadores y
         // posteriormente almacenará la edad promedio
         double edadpromedio=0;
@@ -338,7 +345,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> getPlayersByPosition(Positions position) {
+    public List<Player> getPlayersByPosition(Positions position) throws IOException {
         //cargamos la lista
         listaJugadores= readAllPlayers();
         //generamos otra lista en la que almacenaremos los jugadores de la posicion determinada

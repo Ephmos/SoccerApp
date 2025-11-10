@@ -57,7 +57,7 @@ public interface SoccerDAO {
      *
      * @return Devuelve una lista con los máximos goleadores de la liga
      */
-    List<Player> findTopScorers();
+    List<Player> findTopScorers() throws IOException;
 
     /**
      * Para mostrar al máximo goleador de un equipo en concreto.
@@ -65,7 +65,7 @@ public interface SoccerDAO {
      * @param team Equipo a buscar
      * @return Devuelva al jugador con la mayor cantidad de goles perteneciente al equipo seleccionado
      */
-    List<Player> findTopScorer(String team);
+    List<Player> findTopScorer(String team) throws IOException;
 
     /**
      * Para mostrar todos los jugadores en una posicion determinada.
@@ -73,14 +73,14 @@ public interface SoccerDAO {
      * @param position Posición a buscar
      * @return Devuelve una lista de jugadores en esa posición
      */
-    List<Player> findByPosition(Positions position);
+    List<Player> findByPosition(Positions position) throws IOException;
 
     /**
      * Para obtener la edad promedio de todos los jugadores.
      *
      * @return Devuelve la edad promedio de todos los jugadores
      */
-    double getAverageAge();
+    double getAverageAge() throws IOException;
 
     /**
      * Para contar el número de jugadores en una posición determinada.
@@ -88,7 +88,7 @@ public interface SoccerDAO {
      * @param position Posición a buscar
      * @return Devuelve una lista de jugadores en una posicion determinada
      */
-    List<Player> getPlayersByPosition(Positions position);
+    List<Player> getPlayersByPosition(Positions position) throws IOException;
 
     /**
      * Para ordenar los jugadores por apellidos.
