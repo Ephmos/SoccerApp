@@ -4,6 +4,8 @@ import com.ephmos.SoccerApp.Player;
 import com.ephmos.SoccerApp.Positions;
 import com.ephmos.SoccerApp.SoccerDAOFileJSON;
 import com.ephmos.SoccerApp.SoccerDAOFileXML;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,12 +14,14 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String file = "C:\\Users\\Kevlar\\IdeaProjects\\SoccerApp\\src\\main\\resources\\Jugadores.json";
+        String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources";
+        Jsonb jsonb = JsonbBuilder.create();
         List<Player> players = new ArrayList<>();
-        SoccerDAOFileJSON obj = new SoccerDAOFileJSON(file, players);
+        SoccerDAOFileJSON obj = new SoccerDAOFileJSON(jsonb, file, players);
         try {
-            //System.out.println(obj.readAllPlayers());
-            System.out.println(obj.readPlayers("Antonio"));
+            obj.addPlayer(new Player("Lamine", "Yamal", 18, Positions.FWD, 15, "FC Barcelona"));
+            System.out.println(obj.filterPlayersByAge(18));
+
         } catch (Exception exception) {
             throw new Exception(exception);
         }

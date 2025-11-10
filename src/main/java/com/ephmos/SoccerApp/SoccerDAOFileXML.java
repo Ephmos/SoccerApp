@@ -138,6 +138,37 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
             return new ArrayList<>(); // Retornamos lista vacía en caso de error
         }
     }
+
+    @Override
+    public List<Player> filterPlayersByName(String name) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public List<Player> filterPlayersByLastname(String lastname) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public List<Player> filterPlayersByPosition(Positions position) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public List<Player> filterPlayersByTeam(String team) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public List<Player> filterPlayersByAge(int age) throws Exception {
+        return List.of();
+    }
+
+    @Override
+    public List<Player> filterPlayersByGoals(int goals) throws Exception {
+        return List.of();
+    }
+
     @Override
     public void startDocument() throws SAXException {
         //cuando comience el documento creamos la lista
@@ -235,6 +266,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
     }
 
+    /*
     @Override
     public List<Player> readPlayers(String name) throws IOException {
         //cargamos los jugadores en la lista
@@ -251,7 +283,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         //retornamos la lista
         return Jugador_buscado;
 
-    }
+    }*/
 
     @Override
     public void updatePlayer(Player name) throws IOException {

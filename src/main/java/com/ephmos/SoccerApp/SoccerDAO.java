@@ -1,8 +1,8 @@
 package com.ephmos.SoccerApp;
 
+import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Predicate;
 
 public interface SoccerDAO {
     /**
@@ -22,16 +22,16 @@ public interface SoccerDAO {
     /**
      * Para añadir un jugador al fichero.
      *
-     * @param name Jugador a añadir
+     * @param player Jugador a añadir
      */
-    void addPlayer(Player name);
+    void addPlayer(Player player) throws Exception;
 
     /**
      * Para eliminar un jugador del fichero.
      *
-     * @param name Jugador a eliminar
+     * @param player Jugador a eliminar
      */
-    void deletePlayer(Player name);
+    void deletePlayer(Player player) throws Exception;
 
     /**
      * Para leer todos los jugadores del fichero.
@@ -40,13 +40,12 @@ public interface SoccerDAO {
      */
     List<Player> readAllPlayers() throws Exception;
 
-    /**
-     * Para leer un jugador del fichero.
-     *
-     * @param name Nombre del jugador a leer
-     * @return Jugador leído
-     */
-    List<Player> readPlayers(String name) throws Exception;
+    List<Player> filterPlayersByName(String name) throws Exception;
+    List<Player> filterPlayersByLastname(String lastname) throws Exception;
+    List<Player> filterPlayersByPosition(Positions position) throws Exception;
+    List<Player> filterPlayersByTeam(String team) throws Exception;
+    List<Player> filterPlayersByAge(int age) throws Exception;
+    List<Player> filterPlayersByGoals(int goals) throws Exception;
 
     /**
      * Para actualizar un jugador del fichero.
