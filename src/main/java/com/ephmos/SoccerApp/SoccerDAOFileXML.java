@@ -91,14 +91,14 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
             throw new SecurityException("Ha ocurrido una excepción de seguridad", exception);
         }
         //retorna el valor
-        return isFull;
+        return !isFull;
     }
 
     @Override
     public void addPlayer(Player name) throws IOException {
         //comprobamos que el fichero no este lleno
         File file = new File(this.file);
-        if(!this.isFull()){
+        if(this.isFull()){
             //cargamos a la lista los jugadores con el metodo readPlayers
             listaJugadores=readAllPlayers();
             //añadimos al final el jugaodor que queremos añadir
@@ -323,8 +323,8 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> findByPosition(Positions position) {
-        return List.of();
+    public int findByPosition(Positions position) {
+        return 0;
     }
 
     @Override
@@ -361,7 +361,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> sortBySurname() {
+    public List<Player> sortByLastname() {
         return List.of();
     }
 

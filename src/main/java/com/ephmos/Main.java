@@ -15,17 +15,20 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-       /* String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
+       String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
         Jsonb jsonb = JsonbBuilder.create();
         List<Player> players = new ArrayList<>();
         SoccerDAOFileJSON obj = new SoccerDAOFileJSON(jsonb, file, players);
         try {
+            //obj.addPlayer(new Player("Roberto", "Carlos", 35, Positions.DEF, 30, "FC Barcelona"));
             //System.out.println(obj.readAllPlayers());
-            System.out.println(obj.filterPlayersByAge(33));
-
+            //System.out.println(obj.filterPlayersByAge(33));
+            //System.out.println(obj.getAverageAge());
+            //System.out.println(obj.findTopScorers());
+            System.out.println(obj.findTopScorer("FC Barcelona"));
         } catch (Exception exception) {
             throw new Exception(exception);
-        }*/
+        }
         /*
         SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
         System.out.println("Esta llena?");

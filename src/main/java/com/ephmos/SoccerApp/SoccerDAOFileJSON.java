@@ -5,9 +5,7 @@ import jakarta.json.bind.Jsonb;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) implements SoccerDAO {
@@ -36,12 +34,12 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
         try {
             File file = new File(this.file);
             if (!file.exists()) {
-                return false;
+                return true;
             }
 
             final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
 
-            return file.length() >= MAX_FILE_SIZE;
+            return file.length() < MAX_FILE_SIZE;
         } catch (SecurityException exception) {
             throw new SecurityException("Ha ocurrido una excepción de seguridad", exception);
         }
@@ -49,7 +47,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
 
     @Override
     public void addPlayer(Player player) throws IOException {
-        if (!isFull()) {
+        if (isFull()) {
             List<Player> players = readAllPlayers();
             if (!players.contains(player)) {
                 players.add(player);
@@ -137,23 +135,33 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public List<Player> findTopScorers() {
-        return List.of();
+    public List<Player> findTopScorers() throws IOException {
+        List<Player> players = readAllPlayers();
+        Player topScorer = players.stream().max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);;
+        return List.of(topScorer);
     }
 
     @Override
-    public List<Player> findTopScorer(String team) {
-        return null;
+    public List<Player> findTopScorer(String team) throws IOException {
+        List<Player> players = readAllPlayers();
+        Player topScorerInTeam = players.stream().filter(player -> player.getTeam().equals(team)).max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);
+        return List.of(topScorerInTeam);
     }
 
     @Override
-    public List<Player> findByPosition(Positions position) {
-        return List.of();
+    public int findByPosition(Positions position) throws IOException {
+        List<Player> players = readAllPlayers();
+        return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
     }
 
     @Override
-    public double getAverageAge() {
-        return 0;
+    public double getAverageAge() throws IOException {
+        List<Player> players = readAllPlayers();
+        double agecounter = 0;
+        for (Player player : players) {
+            agecounter+=player.getAge();
+        }
+        return agecounter/players.size();
     }
 
     @Override
@@ -162,18 +170,24 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public List<Player> sortBySurname() {
-        return List.of();
+    public List<Player> sortByLastname() throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getLastname));
+        return players;
     }
 
     @Override
-    public List<Player> sortByAge() {
-        return List.of();
+    public List<Player> sortByAge() throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getAge));
+        return players;
     }
 
     @Override
-    public List<Player> sortByTeam(String team) {
-        return List.of();
+    public List<Player> sortByTeam(String team) throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getTeam));
+        return players;
     }
 
     @Override

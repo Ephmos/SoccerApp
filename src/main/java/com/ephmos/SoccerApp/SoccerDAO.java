@@ -73,7 +73,7 @@ public interface SoccerDAO {
      * @param position Posición a buscar
      * @return Devuelve una lista de jugadores en esa posición
      */
-    List<Player> findByPosition(Positions position) throws IOException;
+    int findByPosition(Positions position) throws IOException;
 
     /**
      * Para obtener la edad promedio de todos los jugadores.
@@ -95,14 +95,14 @@ public interface SoccerDAO {
      *
      * @return Lista de jugadores ordenada por apellidos
      */
-    List<Player> sortBySurname();
+    List<Player> sortByLastname() throws IOException;
 
     /**
      * Para ordenar los jugadores por edad.
      *
      * @return Lista de jugadores ordenada por edad
      */
-    List<Player> sortByAge();
+    List<Player> sortByAge() throws IOException;
 
     /**
      * Para obtener todos los jugadores de un equipo
@@ -110,7 +110,7 @@ public interface SoccerDAO {
      * @param team Equipo
      * @return Lista de jugadores de un equipo
      */
-    List<Player> sortByTeam(String team);
+    List<Player> sortByTeam(String team) throws IOException;
 
     /**
      * Para exportar la información de los jugadores a los ficheros de almacenamiento.
