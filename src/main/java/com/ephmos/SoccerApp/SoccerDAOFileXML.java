@@ -140,50 +140,20 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> filterPlayersByName(String name) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public List<Player> filterPlayersByLastname(String lastname) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public List<Player> filterPlayersByPosition(Positions position) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public List<Player> filterPlayersByTeam(String team) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public List<Player> filterPlayersByAge(int age) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public List<Player> filterPlayersByGoals(int goals) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public void startDocument() throws SAXException {
+    public void startDocument() {
         //cuando comience el documento creamos la lista
         listaJugadores = new ArrayList<Player>();
     }
 
     @Override
-    public void endDocument() throws SAXException {
+    public void endDocument() {
         //añadimos un mensaje de "Fin de documento"
         //lo he comentado porque sino cada vez que lee el documento lo imprime
         //System.out.println("Fin de documento");
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         //este metodo se usa cada vez que se comienza un elemento
         //cuando se crea un "player inicia un objeto de tipo Player para asignarle sus atributos"
         if (qName.equalsIgnoreCase("player")) {
@@ -211,7 +181,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName) {
         //cuando se acabe el elemento  "player" queremos añadir el jugador que hemos generado en memoria
         if (qName.equalsIgnoreCase("player")) {
             listaJugadores.add(jugador);
@@ -266,9 +236,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
     }
 
-    /*
-    @Override
-    public List<Player> readPlayers(String name) throws IOException {
+    public List<Player> readPlayers(String name) {
         //cargamos los jugadores en la lista
         listaJugadores=readAllPlayers();
         //creamos una nueva lista para los jugadores creados
@@ -282,8 +250,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
         //retornamos la lista
         return Jugador_buscado;
-
-    }*/
+    }
 
     @Override
     public void updatePlayer(Player name) throws IOException {

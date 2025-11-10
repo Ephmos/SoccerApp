@@ -1,21 +1,22 @@
 package com.ephmos.SoccerApp;
 
-import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.List;
 
 public interface SoccerDAO {
     /**
-     * Comprobar si el fichero se encuentra vacío.
+     * Comprobar si el fichero está vacío.
      *
-     * @return true si el fichero está vacío
+     * @return si el fichero está vacío
+     * @throws IOException error al realizar la comprobación del fichero.
      */
     boolean isEmpty() throws IOException;
 
     /**
      * Comprobar si el fichero está lleno.
      *
-     * @return true si el fichero está lleno
+     * @return si el fichero está lleno
+     * @throws IOException error al realizar la comprobación del fichero.
      */
     boolean isFull() throws IOException;
 
@@ -23,49 +24,46 @@ public interface SoccerDAO {
      * Para añadir un jugador al fichero.
      *
      * @param player Jugador a añadir
+     * @throws IOException error al añadir el jugador al fichero.
      */
-    void addPlayer(Player player) throws Exception;
+    void addPlayer(Player player) throws IOException;
 
     /**
      * Para eliminar un jugador del fichero.
      *
      * @param player Jugador a eliminar
+     * @throws IOException error al eliminar el jugador del fichero.
      */
-    void deletePlayer(Player player) throws Exception;
+    void deletePlayer(Player player) throws IOException;
 
     /**
      * Para leer todos los jugadores del fichero.
      *
      * @return Lista con todos los jugadores
+     * @throws IOException error al leer el fichero.
      */
-    List<Player> readAllPlayers() throws Exception;
-
-    List<Player> filterPlayersByName(String name) throws Exception;
-    List<Player> filterPlayersByLastname(String lastname) throws Exception;
-    List<Player> filterPlayersByPosition(Positions position) throws Exception;
-    List<Player> filterPlayersByTeam(String team) throws Exception;
-    List<Player> filterPlayersByAge(int age) throws Exception;
-    List<Player> filterPlayersByGoals(int goals) throws Exception;
+    List<Player> readAllPlayers() throws IOException;
 
     /**
      * Para actualizar un jugador del fichero.
      *
      * @param player Jugador a actualizar
+     * @throws IOException error al actualizar el jugador en el fichero.
      */
     void updatePlayer(Player player) throws IOException;
 
     /**
      * Para mostrar los máximos goleadores de la liga.
      *
-     * @return Devuelve una lista con los máximos goleadores
+     * @return Devuelve una lista con los máximos goleadores de la liga
      */
     List<Player> findTopScorers();
 
     /**
-     * Para mostrar el máximo goleador de un equipo en concreto.
+     * Para mostrar al máximo goleador de un equipo en concreto.
      *
      * @param team Equipo a buscar
-     * @return Devuelva el máximo goleador del equipo
+     * @return Devuelva al jugador con la mayor cantidad de goles perteneciente al equipo seleccionado
      */
     List<Player> findTopScorer(String team);
 
@@ -73,7 +71,7 @@ public interface SoccerDAO {
      * Para mostrar todos los jugadores en una posicion determinada.
      *
      * @param position Posición a buscar
-     * @return Devuelve una lista con los jugadores en esa posición
+     * @return Devuelve una lista de jugadores en esa posición
      */
     List<Player> findByPosition(Positions position);
 
@@ -109,13 +107,14 @@ public interface SoccerDAO {
     /**
      * Para obtener todos los jugadores de un equipo
      *
-     * @return Lista de jugadores de un equipo
      * @param team Equipo
+     * @return Lista de jugadores de un equipo
      */
     List<Player> sortByTeam(String team);
 
     /**
      * Para exportar la información de los jugadores a los ficheros de almacenamiento.
+     *
      * @param players Lista de jugadores a exportar.
      */
     void exportPlayersToDataStorage(List<Player> players);

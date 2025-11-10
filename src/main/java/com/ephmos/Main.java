@@ -14,13 +14,13 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources";
+        String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
         Jsonb jsonb = JsonbBuilder.create();
         List<Player> players = new ArrayList<>();
         SoccerDAOFileJSON obj = new SoccerDAOFileJSON(jsonb, file, players);
         try {
-            obj.addPlayer(new Player("Lamine", "Yamal", 18, Positions.FWD, 15, "FC Barcelona"));
-            System.out.println(obj.filterPlayersByAge(18));
+            //System.out.println(obj.readAllPlayers());
+            System.out.println(obj.filterPlayersByAge(33));
 
         } catch (Exception exception) {
             throw new Exception(exception);

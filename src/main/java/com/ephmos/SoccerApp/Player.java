@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Objects;
 
 public class Player implements Externalizable {
     String name;
@@ -112,5 +113,21 @@ public class Player implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player = (Player) o;
+
+        return name.equals(player.name) &&
+                lastname.equals(player.lastname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, lastname);
     }
 }
