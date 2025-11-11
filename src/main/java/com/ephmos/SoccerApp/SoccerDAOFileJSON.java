@@ -149,7 +149,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public int findByPosition(Positions position) throws IOException {
+    public List<Player> findByPosition(Positions position) throws IOException {
         List<Player> players = readAllPlayers();
         return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
     }
@@ -165,7 +165,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public List<Player> getPlayersByPosition(Positions position) {
+    public int getPlayersByPosition(Positions position) {
         return List.of();
     }
 

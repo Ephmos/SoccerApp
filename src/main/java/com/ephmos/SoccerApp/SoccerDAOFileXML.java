@@ -15,6 +15,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,14 +31,6 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     boolean enPosition=false;
     boolean enGoalsNumber=false;
     boolean enTeam= false;
-    //GETERS Y SETERS DE LAS LISTAS
-    public List<Player> getListaJugadores() {
-        return listaJugadores;
-    }
-
-    public void setListaJugadores(List<Player> listaJugadores) {
-        this.listaJugadores = listaJugadores;
-    }
 
     public SoccerDAOFileXML(String file) {
         this.file = file;
@@ -323,8 +316,19 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public int findByPosition(Positions position) {
-        return 0;
+    public List<Player> findByPosition(Positions position) throws IOException {
+        //cargamos la lista
+        listaJugadores= readAllPlayers();
+        //generamos otra lista en la que almacenaremos los jugadores de la posicion determinada
+        List<Player> playersByPosition= new ArrayList<>();
+        //recorremos la lista para almacenar los jugadores que sean de una determinada posicion
+        for (Player p:listaJugadores) {
+            if (p.getPosition().equals(position)) {
+                playersByPosition.add(p);
+            }
+        }
+        //retornamos la lista de los jugadores por posicion
+        return playersByPosition;
     }
 
     @Override
@@ -345,7 +349,9 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> getPlayersByPosition(Positions position) throws IOException {
+    public int getPlayersByPosition(Positions position) throws IOException {
+        //variable para el numero de jugadores
+        int numeroJugadores=0;
         //cargamos la lista
         listaJugadores= readAllPlayers();
         //generamos otra lista en la que almacenaremos los jugadores de la posicion determinada
@@ -356,23 +362,31 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
                 playersByPosition.add(p);
             }
         }
-        //retornamos la lista de los jugadores por posicion
-        return playersByPosition;
+        //asignamos el valor
+        numeroJugadores=playersByPosition.size();
+        //retornamos el numero de jugadores
+        return numeroJugadores;
     }
 
     @Override
-    public List<Player> sortByLastname() {
-        return List.of();
+    public List<Player> sortByLastname() throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getLastname));
+        return players;
     }
 
     @Override
-    public List<Player> sortByAge() {
-        return List.of();
+    public List<Player> sortByAge() throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getAge));
+        return players;
     }
 
     @Override
-    public List<Player> sortByTeam(String team) {
-        return List.of();
+    public List<Player> sortByTeam(String team) throws IOException {
+        List<Player> players = readAllPlayers();
+        players.sort(Comparator.comparing(Player::getTeam));
+        return players;
     }
 
     @Override
