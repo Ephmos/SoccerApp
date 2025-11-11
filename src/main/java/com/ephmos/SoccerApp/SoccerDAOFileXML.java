@@ -32,6 +32,17 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     boolean enGoalsNumber=false;
     boolean enTeam= false;
 
+
+    // GETTERS Y SETTERS LISTA JUGADORES
+    public List<Player> getListaJugadores() {
+        return listaJugadores;
+    }
+
+    public void setListaJugadores(List<Player> listaJugadores) {
+        this.listaJugadores = listaJugadores;
+    }
+
+
     public SoccerDAOFileXML(String file) {
         this.file = file;
     }
@@ -121,7 +132,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     public List<Player> readAllPlayers() throws IOException {
         // Creamos un SAXParserFactory que se utilizarán para procesar el XML
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        saxParserFactory.setNamespaceAware(false);//****
+        saxParserFactory.setNamespaceAware(false);//Specifies that the parser produced by this code will provide support for XML namespaces
         try {
             //Creamos un SAXParser, Este parser es el encargado de leer el archivo XML evento por evento
             //(inicio/fin de elementos, caracteres...)
@@ -370,23 +381,23 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public List<Player> sortByLastname() throws IOException {
-        List<Player> players = readAllPlayers();
-        players.sort(Comparator.comparing(Player::getLastname));
-        return players;
+        listaJugadores =readAllPlayers();
+        listaJugadores.sort(Comparator.comparing(Player::getLastname));
+        return listaJugadores;
     }
 
     @Override
     public List<Player> sortByAge() throws IOException {
-        List<Player> players = readAllPlayers();
-        players.sort(Comparator.comparing(Player::getAge));
-        return players;
+        listaJugadores =readAllPlayers();
+        listaJugadores.sort(Comparator.comparing(Player::getAge));
+        return listaJugadores;
     }
 
     @Override
     public List<Player> sortByTeam(String team) throws IOException {
-        List<Player> players = readAllPlayers();
-        players.sort(Comparator.comparing(Player::getTeam));
-        return players;
+        listaJugadores =readAllPlayers();
+        listaJugadores.sort(Comparator.comparing(Player::getTeam));
+        return listaJugadores;
     }
 
     @Override

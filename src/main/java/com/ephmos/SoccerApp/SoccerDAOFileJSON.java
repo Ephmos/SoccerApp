@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) implements SoccerDAO {
     @Override
@@ -151,7 +152,8 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     @Override
     public List<Player> findByPosition(Positions position) throws IOException {
         List<Player> players = readAllPlayers();
-        return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
+        // return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
+        return players;
     }
 
     @Override
@@ -166,7 +168,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
 
     @Override
     public int getPlayersByPosition(Positions position) {
-        return List.of();
+        return 0;
     }
 
     @Override

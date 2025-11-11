@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-       String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
+       /*String file = "C:\\Users\\Kevlar\\Desktop\\SoccerApp\\src\\main\\resources\\Jugadores.json";
         Jsonb jsonb = JsonbBuilder.create();
         List<Player> players = new ArrayList<>();
         SoccerDAOFileJSON obj = new SoccerDAOFileJSON(jsonb, file, players);
@@ -28,10 +28,10 @@ public class Main {
             System.out.println(obj.findTopScorer("FC Barcelona"));
         } catch (Exception exception) {
             throw new Exception(exception);
-        }
-        /*
+        }*/
+
         SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
-        System.out.println("Esta llena?");
+        /*System.out.println("Esta llena?");
         System.out.println(prueba1.isFull());
         System.out.println("Esta vacio?");
         System.out.println(prueba1.isEmpty());
@@ -66,7 +66,15 @@ public class Main {
         System.out.println("");
         System.out.println("Edad promedio "+prueba1.getAverageAge());
         System.out.println("");
-        prueba1.getPlayersByPosition(Positions.MF).forEach(System.out::println);*/
+        prueba1.findByPosition(Positions.MF).forEach(System.out::println);
+        System.out.println("buscar jugador por nombre");*/
+        //prueba1.readPlayers("Iñaki").forEach(System.out::println);
+        //prueba1.sortByAge();
+        //prueba1.getListaJugadores().forEach(System.out::println);
+        //prueba1.sortByTeam();
+        //prueba1.getListaJugadores().forEach(System.out::println);
+        //prueba1.sortByLastname();
+        //prueba1.getListaJugadores().forEach(System.out::println);
 
 
         //LLAMADAS AL SISTEMA
