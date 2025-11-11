@@ -92,25 +92,18 @@ public interface SoccerDAO {
 
     /**
      * Para ordenar los jugadores por apellidos.
-     *
-     * @return Lista de jugadores ordenada por apellidos
      */
-    List<Player> sortByLastname() throws IOException;
+    void sortByLastname() throws IOException;
 
     /**
      * Para ordenar los jugadores por edad.
-     *
-     * @return Lista de jugadores ordenada por edad
      */
-    List<Player> sortByAge() throws IOException;
+    void sortByAge() throws IOException;
 
     /**
-     * Para obtener todos los jugadores de un equipo
-     *
-     * @param team Equipo
-     * @return Lista de jugadores de un equipo
+     * Para ordenar todos los jugadores por equipo
      */
-    List<Player> sortByTeam(String team) throws IOException;
+    void sortByTeam() throws IOException;
 
     /**
      * Para exportar la información de los jugadores a los ficheros de almacenamiento.

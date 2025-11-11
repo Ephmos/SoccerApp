@@ -172,24 +172,24 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public List<Player> sortByLastname() throws IOException {
+    public void sortByLastname() throws IOException {
         List<Player> players = readAllPlayers();
         players.sort(Comparator.comparing(Player::getLastname));
-        return players;
+        exportPlayersToDataStorage(players);
     }
 
     @Override
-    public List<Player> sortByAge() throws IOException {
+    public void sortByAge() throws IOException {
         List<Player> players = readAllPlayers();
         players.sort(Comparator.comparing(Player::getAge));
-        return players;
+        exportPlayersToDataStorage(players);
     }
 
     @Override
-    public List<Player> sortByTeam(String team) throws IOException {
+    public void sortByTeam() throws IOException {
         List<Player> players = readAllPlayers();
         players.sort(Comparator.comparing(Player::getTeam));
-        return players;
+        exportPlayersToDataStorage(players);
     }
 
     @Override

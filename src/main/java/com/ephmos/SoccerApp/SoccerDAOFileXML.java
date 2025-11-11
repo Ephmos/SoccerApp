@@ -380,27 +380,27 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> sortByLastname() throws IOException {
+    public void sortByLastname() throws IOException {
         //cargamos la lista
         listaJugadores =readAllPlayers();
         //usamos el comparator para ordenar
         listaJugadores.sort(Comparator.comparing(Player::getLastname));
         //retornamos la lista
-        return listaJugadores;
+        exportPlayersToDataStorage(listaJugadores);
     }
 
     @Override
-    public List<Player> sortByAge() throws IOException {
+    public void sortByAge() throws IOException {
         listaJugadores =readAllPlayers();
         listaJugadores.sort(Comparator.comparing(Player::getAge));
-        return listaJugadores;
+        exportPlayersToDataStorage(listaJugadores);
     }
 
     @Override
-    public List<Player> sortByTeam(String team) throws IOException {
+    public void sortByTeam() throws IOException {
         listaJugadores =readAllPlayers();
         listaJugadores.sort(Comparator.comparing(Player::getTeam));
-        return listaJugadores;
+        exportPlayersToDataStorage(listaJugadores);
     }
 
     @Override
