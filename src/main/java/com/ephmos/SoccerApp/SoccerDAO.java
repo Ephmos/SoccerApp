@@ -110,5 +110,5 @@ public interface SoccerDAO {
      *
      * @param players Lista de jugadores a exportar.
      */
-    void exportPlayersToDataStorage(List<Player> players);
+    void exportPlayersToDataStorage(List<Player> players) throws IOException;
 }

@@ -18,6 +18,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
                 return true;
             }
 
+            // Creamos el buffer y comenzamos a leer.
             try (BufferedReader br = new BufferedReader(new FileReader(this.file))) {
                 if (br.readLine() == null) {
                     return true;
@@ -38,7 +39,8 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
                 return true;
             }
 
-            final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+            // Establecemos cuál será el máximo del fichero
+            final long MAX_FILE_SIZE = 10 * 1024;
 
             return file.length() < MAX_FILE_SIZE;
         } catch (SecurityException exception) {
@@ -83,6 +85,9 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     @Override
     public List<Player> readAllPlayers() throws IOException {
         try (FileReader fileReader = new FileReader(this.file, StandardCharsets.UTF_8)) {
+            /* Aquí lo que hacemos es recalcarle a Jsonb que lo que queremos deserializar es una lista de tipo Player,
+            no sabría que cada elemento de la lista debe ser un elemento tipo Player de no ser por esto.*/
+
             Type listType = new ArrayList<Player>(){}.getClass().getGenericSuperclass();
             List<Player> players = jsonb.fromJson(fileReader, listType);
             return players != null ? players : new ArrayList<>();
@@ -91,6 +96,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
         }
     }
 
+    // Cada uno de estos métodos hace una llamada al de abajo
     public List<Player> filterPlayersByName(String name) throws IOException {
         return filterReadancePlayers(player -> player.getName().equals(name));
     }
@@ -116,28 +122,49 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     public List<Player> filterReadancePlayers(Predicate<Player> filter) throws IOException {
-        try (FileReader fileReader = new FileReader(this.file, StandardCharsets.UTF_8)) {
-            Player[] filteredPlayers = jsonb.fromJson(fileReader, Player[].class);
-            if (Arrays.stream(filteredPlayers).noneMatch(filter)) {
-                System.out.println("No hay ningún jugador que coincida con el valor introducido igualado a ese atributo.");
+        try (FileReader fileReader = new FileReader(this.file)) {
+            Type listType = new ArrayList<Player>(){}.getClass().getGenericSuperclass();
+            List<Player> allPlayers = jsonb.fromJson(fileReader, listType);
+
+            /* Aplico el filtro deseado para que me devuelva una secuencia de elementos, en este caso ya procesados por el filtro de cualquiera
+            de los métodos de arriba, es decir, es una lista transformada. */
+            List<Player> filteredPlayers = allPlayers.stream().filter(filter).toList();
+
+            if (filteredPlayers.isEmpty()) {
+                System.out.println("No hay ningún jugador que coincida con el valor introducido.");
                 return List.of();
-            } else {
-                this.players.addAll(Arrays.stream(filteredPlayers).filter(filter).toList());
-                return players;
             }
+
+            return filteredPlayers;
         } catch (IOException exception) {
             throw new IOException("Error leyendo jugadores del archivo", exception);
         }
     }
 
     @Override
-    public void updatePlayer(Player player) {
-
+    public void updatePlayer(Player updatePlayer) throws IOException {
+        List<Player> players = readAllPlayers();
+        for (Player player : players) {
+            // Busco jugadores que coincidan en nombre y apellido.
+            if (player.getName().equals(updatePlayer.getName()) && player.getLastname().equals(updatePlayer.getLastname())) {
+                player.setAge(updatePlayer.getAge());
+                player.setTeam(updatePlayer.getTeam());
+                player.setPosition(updatePlayer.getPosition());
+                player.setGoalsNumber(updatePlayer.getGoalsNumber());
+            }
+        }
+        try (FileWriter fileWriter = new FileWriter(this.file, StandardCharsets.UTF_8)) {
+            jsonb.toJson(players, fileWriter);
+        } catch (IOException exception) {
+            throw new IOException("Error escribiendo jugadores al archivo", exception);
+        }
     }
 
     @Override
     public List<Player> findTopScorers() throws IOException {
         List<Player> players = readAllPlayers();
+        /* Realizamos una filtración, comparando el número de goles, en este caso sólo dejaremos aquellos elementos que tengan el máximo, si no encontramos ningún elemento
+           el programa lanzará una excepción */
         Player topScorer = players.stream().max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);;
         return List.of(topScorer);
     }
@@ -145,6 +172,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     @Override
     public List<Player> findTopScorer(String team) throws IOException {
         List<Player> players = readAllPlayers();
+        // Realizamos lo mismo que en el bloque anterior, pero en este caso con los jugadores de un equipo en concreto
         Player topScorerInTeam = players.stream().filter(player -> player.getTeam().equals(team)).max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);
         return List.of(topScorerInTeam);
     }
@@ -152,13 +180,13 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     @Override
     public List<Player> findByPosition(Positions position) throws IOException {
         List<Player> players = readAllPlayers();
-        // return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
-        return players;
+        return players.stream().filter(player -> player.getPosition().equals(position)).toList();
     }
 
     @Override
     public double getAverageAge() throws IOException {
         List<Player> players = readAllPlayers();
+        // Sacamos la media, sumando todas las edades y dividiéndola por la cantidad de jugadores que hay en la liga.
         double agecounter = 0;
         for (Player player : players) {
             agecounter+=player.getAge();
@@ -167,8 +195,9 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public int getPlayersByPosition(Positions position) {
-        return 0;
+    public int getPlayersByPosition(Positions position) throws IOException {
+        List<Player> players = readAllPlayers();
+        return Math.toIntExact(players.stream().filter(player -> player.getPosition().equals(position)).count());
     }
 
     @Override
@@ -193,7 +222,15 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
     }
 
     @Override
-    public void exportPlayersToDataStorage(List<Player> players) {
-
+    public void exportPlayersToDataStorage(List<Player> players) throws IOException {
+        if (players != null && !players.isEmpty()) {
+            try (FileWriter writer = new FileWriter("players.txt")) {
+                for (Player player : players) {
+                    writer.write(player.toString() + "\n");
+                }
+            } catch (IOException exception) {
+                throw new IOException("Error leyendo jugadores del archivo", exception);
+            }
+        }
     }
 }
