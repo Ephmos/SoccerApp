@@ -42,7 +42,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         this.listaJugadores = listaJugadores;
     }
 
-
+    //constructor
     public SoccerDAOFileXML(String file) {
         this.file = file;
     }
@@ -381,8 +381,11 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
 
     @Override
     public List<Player> sortByLastname() throws IOException {
+        //cargamos la lista
         listaJugadores =readAllPlayers();
+        //usamos el comparator para ordenar
         listaJugadores.sort(Comparator.comparing(Player::getLastname));
+        //retornamos la lista
         return listaJugadores;
     }
 
