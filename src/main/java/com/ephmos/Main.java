@@ -30,7 +30,7 @@ public class Main {
             throw new Exception(exception);
         }*/
 
-        SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\Jugadores.xml");
+        SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("Jugadores.xml");
         /*System.out.println("Esta llena?");
         System.out.println(prueba1.isFull());
         System.out.println("Esta vacio?");
@@ -67,19 +67,19 @@ public class Main {
         System.out.println("Edad promedio "+prueba1.getAverageAge());
         System.out.println("");
         prueba1.findByPosition(Positions.MF).forEach(System.out::println);
-        System.out.println("buscar jugador por nombre");*/
+        System.out.println("buscar jugador por nombre");
         //prueba1.readPlayers("Iñaki").forEach(System.out::println);
         //prueba1.sortByAge();
         //prueba1.getListaJugadores().forEach(System.out::println);
         //prueba1.sortByTeam();
-        //prueba1.getListaJugadores().forEach(System.out::println);
+        //prueba1.getListaJugadores().forEach(System.out::println);*/
         //prueba1.sortByLastname();
         //prueba1.getListaJugadores().forEach(System.out::println);
 
 
         //LLAMADAS AL SISTEMA
-        //generarArchivo("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources","prueba1.txt");
-        //renombrarArchivo("C:\\Users\\Klugy\\Desktop\\2ºDAM\\GITHUB\\SoccerApp\\src\\main\\resources\\JavierJaen.txt","prueba1.txt");
+        //generarArchivo("./","prueba1.txt");
+        //renombrarArchivo("./prueba1.txt","messi.txt");
     }
     //metodo que genera un archivo introduciendo una ruta y un nombre de directorio
     public static void generarArchivo(String ruta, String nombreArchivo) throws IOException {
