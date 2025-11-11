@@ -106,48 +106,40 @@ public class Main {
 
 
         SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("Jugadores.xml");
-        System.out.println("Esta llena?");
-        System.out.println(prueba1.isFull());
-        System.out.println("Esta vacio?");
-        System.out.println(prueba1.isEmpty());
-        //CARGAMOS LA LISTA
-        prueba1.readAllPlayers();
-        //COMPROBAMOS QUE SE HAN CARGADO
-        for(Player p : prueba1.getListaJugadores()){
-            System.out.println(p);
-        }
-        //Hay 48 jugadores
-        System.out.println("Numero de Jugadores: "+prueba1.getListaJugadores().size());
-        prueba1.addPlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
-        System.out.println("");
-        prueba1.addPlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "Real Madrid"));
-        System.out.println("");
-        prueba1.deletePlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
-        System.out.println("");
         try {
+            System.out.println("Esta llena?");
+            System.out.println(prueba1.isFull());
+            System.out.println("Esta vacio?");
+            System.out.println(prueba1.isEmpty());
+            //CARGAMOS LA LISTA
+            prueba1.readAllPlayers();
+            //COMPROBAMOS QUE SE HAN CARGADO
+            for(Player p : prueba1.getListaJugadores()){
+                System.out.println(p);
+            }
+            //Hay 48 jugadores
+            System.out.println("Numero de Jugadores: "+prueba1.getListaJugadores().size());
+            prueba1.addPlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
+            prueba1.addPlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "Real Madrid"));
+            prueba1.deletePlayer(new Player("Alejandro", "Balde", 21, Positions.DEF, 0, "FC Barcelona"));
             prueba1.updatePlayer(new Player("Ferland", "Mendy", 30, Positions.DEF, 1, "FC Barcelona"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("");
-        System.out.println("Top scorers");
-        prueba1.findTopScorers().forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Top scorers from barsa");
-        prueba1.findTopScorer("FC Barcelona").forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Top scorers from atleti");
-        prueba1.findTopScorer("Atlético de Madrid").forEach(System.out::println);
-        System.out.println("");
-        System.out.println("Edad promedio "+prueba1.getAverageAge());
-        System.out.println("");
-        prueba1.findByPosition(Positions.MF).forEach(System.out::println);
-        System.out.println("buscar jugador por nombre");
+            System.out.println("Top scorers");
+            prueba1.findTopScorers().forEach(System.out::println);
+            System.out.println("Top scorers from barsa");
+            prueba1.findTopScorer("FC Barcelona").forEach(System.out::println);
+            System.out.println("Top scorers from atleti");
+            prueba1.findTopScorer("Atlético de Madrid").forEach(System.out::println);
+            System.out.println("Edad promedio "+prueba1.getAverageAge());
+            prueba1.findByPosition(Positions.MF).forEach(System.out::println);
+            System.out.println("buscar jugador por nombre");
 
-        prueba1.readPlayers("Iñaki").forEach(System.out::println);
-        prueba1.sortByAge();
-        prueba1.sortByTeam();
-        prueba1.sortByLastname();
+            prueba1.readPlayers("Iñaki").forEach(System.out::println);
+            prueba1.sortByAge();
+            prueba1.sortByTeam();
+            prueba1.sortByLastname();
+        } catch (IOException exception) {
+            throw new IOException(exception);
+        }
 
         //LLAMADAS AL SISTEMA
         generarArchivo("./","prueba1.txt");

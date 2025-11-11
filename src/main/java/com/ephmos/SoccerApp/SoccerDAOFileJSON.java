@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) implements SoccerDAO {
     @Override
@@ -165,7 +164,7 @@ public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) 
         List<Player> players = readAllPlayers();
         /* Realizamos una filtración, comparando el número de goles, en este caso sólo dejaremos aquellos elementos que tengan el máximo, si no encontramos ningún elemento
            el programa lanzará una excepción */
-        Player topScorer = players.stream().max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);;
+        Player topScorer = players.stream().max(Comparator.comparing(Player::getGoalsNumber)).orElseThrow(NoSuchElementException::new);
         return List.of(topScorer);
     }
 
