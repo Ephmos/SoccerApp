@@ -2,24 +2,9 @@ package com.ephmos.SoccerApp;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface SoccerDAO {
-    /**
-     * Comprobar si el fichero está vacío.
-     *
-     * @return si el fichero está vacío
-     * @throws IOException error al realizar la comprobación del fichero.
-     */
-    boolean isEmpty() throws IOException;
-
-    /**
-     * Comprobar si el fichero está lleno.
-     *
-     * @return si el fichero está lleno
-     * @throws IOException error al realizar la comprobación del fichero.
-     */
-    boolean isFull() throws IOException;
-
     /**
      * Para añadir un jugador al fichero.
      *
@@ -42,7 +27,7 @@ public interface SoccerDAO {
      * @return Lista con todos los jugadores
      * @throws IOException error al leer el fichero.
      */
-    List<Player> readAllPlayers() throws IOException;
+    TreeSet<Player> readAllPlayers() throws IOException;
 
     /**
      * Para actualizar un jugador del fichero.
@@ -104,11 +89,4 @@ public interface SoccerDAO {
      * Para ordenar todos los jugadores por equipo
      */
     void sortByTeam() throws IOException;
-
-    /**
-     * Para exportar la información de los jugadores a los ficheros de almacenamiento.
-     *
-     * @param players Lista de jugadores a exportar.
-     */
-    void exportPlayersToDataStorage(List<Player> players) throws IOException;
 }
