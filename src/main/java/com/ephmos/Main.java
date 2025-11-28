@@ -2,7 +2,7 @@ package com.ephmos;
 
 import com.ephmos.SoccerApp.objects.Player;
 import com.ephmos.SoccerApp.others.Positions;
-import com.ephmos.SoccerApp.SoccerDAOFileXML;
+import com.ephmos.SoccerApp.SoccerXML;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class Main {
 //        }
 //
 
-        SoccerDAOFileXML prueba1 = new SoccerDAOFileXML("Jugadores.xml");
+        SoccerXML prueba1 = new SoccerXML("Jugadores.xml");
         try {
             System.out.println("Esta llena?");
             System.out.println(prueba1.isFull());

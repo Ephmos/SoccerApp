@@ -7,16 +7,20 @@ import java.util.TreeSet;
 
 public interface SoccerDAO {
     void createPlayer(Player player);
-    void removePlayer(Player player);
+    void deletePlayer(Player player);
     void updatePlayer(Player player);
     boolean playerExists(Player player);
+    // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
+    TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber);
     TreeSet<Player> readAllPlayers();
-    TreeSet<Player> findTopScorers();
+    TreeSet<Player> findTopScorer();
     TreeSet<Player> findTopScorer(String team);
-    TreeSet<Player> findByPosition(Positions position);
+    TreeSet<Player> sortByName();
+    TreeSet<Player> sortByLastname();
+    TreeSet<Player> sortByAge(boolean ascending);
+    TreeSet<Player> sortByPosition();
+    TreeSet<Player> sortByGoals(boolean ascending);
+    TreeSet<Player> sortByTeam();
     double getAverageAge();
-    int getPlayersByPosition(Positions position);
-    void sortByLastname();
-    void sortByAge();
-    void sortByTeam();
+    double getAverageGoals();
 }

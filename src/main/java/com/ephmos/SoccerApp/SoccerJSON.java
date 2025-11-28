@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Predicate;
 
-public record SoccerDAOFileJSON(Jsonb jsonb, String file, List<Player> players) implements SoccerDAO {
+public record SoccerJSON(Jsonb jsonb, String file, List<Player> players) implements SoccerDAO {
     public boolean isEmpty() throws IOException {
         try {
             File file = new File(this.file);

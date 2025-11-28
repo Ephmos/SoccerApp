@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO {
+public class SoccerXML extends DefaultHandler implements SoccerDAO {
     //VALORES QUE NECESITAREMOS
     private long maxBytes= 52428800;
     private String file;
@@ -46,7 +46,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO {
     }
 
     //constructor
-    public SoccerDAOFileXML(String file) {
+    public SoccerXML(String file) {
         this.file = file;
     }
 
