@@ -1,5 +1,8 @@
 package com.ephmos.SoccerApp;
 
+import com.ephmos.SoccerApp.dao.SoccerDAO;
+import com.ephmos.SoccerApp.objects.Player;
+import com.ephmos.SoccerApp.others.Positions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -19,7 +22,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
+public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO {
     //VALORES QUE NECESITAREMOS
     private long maxBytes= 52428800;
     private String file;
@@ -47,7 +50,6 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         this.file = file;
     }
 
-    @Override
     public boolean isEmpty() throws IOException {
         //creamos variable que nos dirá si esta o no Vacio
         boolean isEmpty=false;
@@ -74,7 +76,6 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         return isEmpty;
     }
 
-    @Override
     public boolean isFull() {
         //creamos la variable y la inicializamos a false
         boolean isFull = false;
@@ -99,7 +100,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void addPlayer(Player name) throws IOException {
+    public void addPlayer(Player name) {
         //comprobamos que el fichero no este lleno
         File file = new File(this.file);
         if(this.isFull()){
@@ -113,7 +114,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void deletePlayer(Player name) throws IOException {
+    public void deletePlayer(Player name) {
         //cargamos a la lista los jugadores con el metodo readPlayers
         listaJugadores=readAllPlayers();
         //eliminamos jugador, es necesario crear un iterador para eliminarlo(lo vimos el año pasado en clase)
@@ -129,7 +130,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public List<Player> readAllPlayers() throws IOException {
+    public List<Player> readAllPlayers() {
         // Creamos un SAXParserFactory que se utilizarán para procesar el XML
         SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
         saxParserFactory.setNamespaceAware(false);//Specifies that the parser produced by this code will provide support for XML namespaces
@@ -247,7 +248,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
         }
     }
 
-    public List<Player> readPlayers(String name) throws IOException {
+    public List<Player> readPlayers(String name) {
         //cargamos los jugadores en la lista
         listaJugadores=readAllPlayers();
         //creamos una nueva lista para los jugadores creados
@@ -264,7 +265,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void updatePlayer(Player name) throws IOException {
+    public void updatePlayer(Player name) {
         //cargamos a la lista los jugadores con el metodo readPlayers
         listaJugadores=readAllPlayers();
         //actualizamos un jugador
@@ -380,7 +381,7 @@ public class SoccerDAOFileXML extends DefaultHandler implements SoccerDAO  {
     }
 
     @Override
-    public void sortByLastname() throws IOException {
+    public void sortByLastname() {
         //cargamos la lista
         listaJugadores =readAllPlayers();
         //usamos el comparator para ordenar

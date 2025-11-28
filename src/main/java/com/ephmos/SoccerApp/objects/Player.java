@@ -1,4 +1,6 @@
-package com.ephmos.SoccerApp;
+package com.ephmos.SoccerApp.objects;
+
+import com.ephmos.SoccerApp.others.Positions;
 
 import java.io.Externalizable;
 import java.io.IOException;

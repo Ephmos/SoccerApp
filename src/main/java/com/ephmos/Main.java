@@ -1,19 +1,11 @@
 package com.ephmos;
 
-import com.ephmos.SoccerApp.Player;
-import com.ephmos.SoccerApp.Positions;
-import com.ephmos.SoccerApp.SoccerDAOFileJSON;
+import com.ephmos.SoccerApp.objects.Player;
+import com.ephmos.SoccerApp.others.Positions;
 import com.ephmos.SoccerApp.SoccerDAOFileXML;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
