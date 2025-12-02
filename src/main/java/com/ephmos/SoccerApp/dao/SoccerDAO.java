@@ -1,5 +1,6 @@
 package com.ephmos.SoccerApp.dao;
 
+import com.ephmos.SoccerApp.exceptions.DataAccessException;
 import com.ephmos.SoccerApp.objects.Player;
 import com.ephmos.SoccerApp.others.Positions;
 
@@ -16,7 +17,7 @@ public interface SoccerDAO {
     //DataAccessException
     void updatePlayer(Player player);
     //DataAccessException
-    boolean playerExists(Player player);
+    boolean playerExists(Player player) throws DataAccessException;
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
     //DataAccessException
     TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber);
