@@ -7,12 +7,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Database {
-    Connection connection;
+    private final Connection connection;
     public Database() throws DataAccessException {
         try {
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/aprendizaje");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/aprendizaje?user=admin&password=alumno");
         } catch (SQLException exception) {
-            throw new DataAccessException("Ha ocurrido un error al intentar realizar la conexión con la base de datos.",exception);
+            throw new DataAccessException("Ha ocurrido un error al intentar realizar la conexión con la base de datos.", exception);
         }
     }
 

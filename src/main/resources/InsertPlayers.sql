@@ -1,4 +1,4 @@
-INSERT INTO "Players"."Player"
+INSERT INTO soccerdb.players
 (name, lastname, age, position, goalsNumber, team)
 VALUES
     ('David','Alaba',33,'DEF',0,'Real Madrid'),
