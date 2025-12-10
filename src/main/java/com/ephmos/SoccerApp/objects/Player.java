@@ -94,9 +94,7 @@ public class Player implements Externalizable {
     public String toString() {
         return String.format(
                 """
-                        
-                        
-                        Jugador {%n\
+                        {%n\
                           name: %s %s%n\
                           age: %d%n\
                           position: %s%n\
@@ -117,6 +115,7 @@ public class Player implements Externalizable {
 
     }
 
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,5 +130,5 @@ public class Player implements Externalizable {
     @Override
     public int hashCode() {
         return Objects.hash(name, lastname);
-    }
+    }*/
 }

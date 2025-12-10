@@ -6,6 +6,7 @@ import com.ephmos.SoccerApp.exceptions.PlayerNotFoundException;
 import com.ephmos.SoccerApp.objects.Player;
 import com.ephmos.SoccerApp.others.Positions;
 
+import java.util.List;
 import java.util.TreeSet;
 
 public interface SoccerDAO {
@@ -23,6 +24,7 @@ public interface SoccerDAO {
      * @throws DataAccessException No es posible conectarse a la fuente de datos.
      */
     void deletePlayer(Player player) throws PlayerNotFoundException, DataAccessException;
+    long getPlayerId(String name, String lastname, int age) throws DataAccessException;
     void updatePlayer(Player player, int newGoalsNumber, String newTeam) throws PlayerNotFoundException, DataAccessException;
     /**
      * Comprobar la existencia de un jugador.
@@ -31,11 +33,12 @@ public interface SoccerDAO {
      * @throws DataAccessException No es posible conectarse a la fuente de datos.
      */
     boolean playerExists(Player player) throws DataAccessException;
+    long getTeamId(String name) throws DataAccessException;
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
     //DataAccessException
     TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber);
     //DataAccessException
-    TreeSet<Player> readAllPlayers();
+    List<Player> readAllPlayers() throws DataAccessException;
     //DataAccessException
     TreeSet<Player> findTopScorer();
     //DataAccessException

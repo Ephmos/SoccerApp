@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class SoccerDB implements SoccerDAO {
@@ -21,19 +22,20 @@ public class SoccerDB implements SoccerDAO {
     }
 
     @Override
-    public void createPlayer(Player player) throws DataAccessException {
-        String sql = "INSERT INTO soccerdb.players(name, lastname, age, position, goalsNumber, team) VALUES (?, ?, ?, ?, ?, ?)";
+    public void createPlayer(Player player) throws PlayerAlreadyExistsException, DataAccessException {
+        String sql = "INSERT INTO soccerdb.players(name, lastname, age, position, goalsNumber, teamid) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setString(1, player.getName());
             statement.setString(2, player.getLastname());
             statement.setInt(3, player.getAge());
             statement.setObject(4, player.getPosition().toString(), Types.OTHER);
             statement.setInt(5, player.getGoalsNumber());
-            statement.setString(6, player.getTeam());
+            statement.setLong(6, getTeamId(player.getTeam()));
             if (playerExists(player)) {
                 throw new PlayerAlreadyExistsException("El jugador que se ha intentado insertar ya existe en la base de datos.");
+            } else {
+                statement.executeUpdate();
             }
-            statement.executeUpdate();
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al crear al jugador.");
         }
@@ -41,37 +43,57 @@ public class SoccerDB implements SoccerDAO {
 
     @Override
     public void deletePlayer(Player player) throws DataAccessException {
-        String sql = "DELETE FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ? AND position = ? AND goalsNumber = ? AND team = ?";
+        String sql = "DELETE FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ? AND position = ? AND goalsNumber = ? AND teamid = ?";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setString(1, player.getName());
             statement.setString(2, player.getLastname());
             statement.setInt(3, player.getAge());
             statement.setObject(4, player.getPosition().toString(), Types.OTHER);
             statement.setInt(5, player.getGoalsNumber());
-            statement.setString(6, player.getTeam());
+            statement.setLong(6, getTeamId(player.getTeam()));
             if (!playerExists(player)) {
                 throw new PlayerNotFoundException("El jugador que se ha intentado eliminar no existe en la base de datos.");
+            } else {
+                statement.executeUpdate();
             }
-            statement.executeUpdate();
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al eliminar al jugador.");
         }
     }
 
     @Override
-    public void updatePlayer(Player player, int newGoalsNumber, String newTeam) throws PlayerNotFoundException, DataAccessException {
-        String sql = "UPDATE soccerdb.players SET goalsNumber = ? WHERE name = ? AND lastname = ? AND age = ? AND position = ?";
+    public long getPlayerId(String name, String lastname, int age) throws PlayerNotFoundException, DataAccessException {
+        String sql = "SELECT id FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ?";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
-            if (!playerExists(player)) {
-                throw new PlayerNotFoundException("El jugador que se ha intentado actualizar no existe en la base de datos.");
+            statement.setString(1, name);
+            statement.setString(2, lastname);
+            statement.setInt(3, age);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong("id");
+            } else {
+                throw new PlayerNotFoundException("No se encontró ningún ID asociado a los datos de jugador introducidos.");
             }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al leer el id del jugador", exception);
+        }
+    }
+
+    @Override // EDAD, POSICIÓN, GOLES, EQUIPO
+    public void updatePlayer(Player player, int newGoalsNumber, String newTeam) throws PlayerNotFoundException, DataAccessException {
+        String sql = "UPDATE soccerdb.players SET goalsNumber = ?, team = ? WHERE name = ? AND lastname = ? AND age = ? AND position = ?";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setInt(1, newGoalsNumber);
             statement.setString(2, newTeam);
             statement.setString(3, player.getName());
             statement.setString(4, player.getLastname());
             statement.setInt(5, player.getAge());
             statement.setObject(6, player.getPosition().toString(), Types.OTHER);
-            statement.executeUpdate();
+            if (!playerExists(player)) {
+                throw new PlayerNotFoundException("El jugador que se ha intentado actualizar no existe en la base de datos.");
+            } else {
+                statement.executeUpdate();
+            }
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al actualizar al jugador.");
         }
@@ -79,20 +101,38 @@ public class SoccerDB implements SoccerDAO {
 
     @Override
     public boolean playerExists(Player player) throws DataAccessException {
-        String sql = "SELECT name, lastname, age, position, goalsNumber, team FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ? AND position = ? AND goalsNumber = ? AND team = ?";
+        String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ? AND position = ? AND goalsNumber = ? AND teamid = ?";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setString(1, player.getName());
             statement.setString(2, player.getLastname());
             statement.setInt(3, player.getAge());
             statement.setObject(4, player.getPosition().toString(), Types.OTHER);
             statement.setInt(5, player.getGoalsNumber());
-            statement.setString(6, player.getTeam());
+            statement.setLong(6, getTeamId(player.getTeam()));
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al leer al jugador.", exception);
         }
     }
+
+    @Override
+    public long getTeamId(String name) throws DataAccessException {
+        String sql = "SELECT id FROM soccerdb.teams WHERE name = ?";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            statement.setString(1, name);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong("id");
+            } else {
+                // EXCEPCIÓN PERSONALIZADA BLABLA
+                return 0;
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al leer el id del equipo", exception);
+        }
+    }
+
 
     // TERMINAR: Pensar en la lógica interna del método para realizar una comprobación específica.
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
@@ -103,8 +143,24 @@ public class SoccerDB implements SoccerDAO {
 
     // Leer todos los jugadores
     @Override
-    public TreeSet<Player> readAllPlayers() {
-        return null;
+    public ArrayList<Player> readAllPlayers() throws DataAccessException {
+        String sql = "SELECT name, lastname, age, position, goalsNumber, team FROM soccerdb.players";
+        ArrayList<Player> players = new ArrayList<>();
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String lastname = resultSet.getString("lastname");
+                int age = resultSet.getInt("age");
+                Positions position = Positions.valueOf(resultSet.getString("position"));
+                int goalsNumber = resultSet.getInt("goalsNumber");
+                String team = resultSet.getString("team");
+                players.add(new Player(name, lastname, age, position, goalsNumber, team));
+            }
+            return players;
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al intentar leer a los jugadores.");
+        }
     }
 
     // Buscar el top goleadores
