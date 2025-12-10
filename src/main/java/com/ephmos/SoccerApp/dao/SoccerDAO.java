@@ -36,25 +36,25 @@ public interface SoccerDAO {
     long getTeamId(String name) throws DataAccessException;
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
     //DataAccessException
-    TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber);
+    TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber) throws DataAccessException;
     //DataAccessException
     List<Player> readAllPlayers() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> findTopScorer();
+    TreeSet<Player> findTopScorer() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> findTopScorer(String team);
+    TreeSet<Player> findTopScorer(String team) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByName();
+    TreeSet<Player> sortByName() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByLastname();
+    TreeSet<Player> sortByLastname() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByAge(boolean ascending);
+    TreeSet<Player> sortByAge(boolean ascending) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByPosition();
+    TreeSet<Player> sortByPosition() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByGoals(boolean ascending);
+    TreeSet<Player> sortByGoals(boolean ascending) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByTeam();
+    TreeSet<Player> sortByTeam() throws DataAccessException;
     //DataAccessException
     double getAverageAge();
     //DataAccessException
