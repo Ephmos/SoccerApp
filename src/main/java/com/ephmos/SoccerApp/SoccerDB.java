@@ -2,16 +2,12 @@ package com.ephmos.SoccerApp;
 
 import com.ephmos.SoccerApp.dao.SoccerDAO;
 import com.ephmos.SoccerApp.db.Database;
-import com.ephmos.SoccerApp.exceptions.DataAccessException;
-import com.ephmos.SoccerApp.exceptions.PlayerAlreadyExistsException;
-import com.ephmos.SoccerApp.exceptions.PlayerNotFoundException;
+import com.ephmos.SoccerApp.exceptions.*;
 import com.ephmos.SoccerApp.objects.Player;
+import com.ephmos.SoccerApp.objects.Team;
 import com.ephmos.SoccerApp.others.Positions;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -42,20 +38,43 @@ public class SoccerDB implements SoccerDAO {
     }
 
     @Override
-    public void deletePlayer(Player player) throws DataAccessException {
-        String sql = "DELETE FROM soccerdb.players WHERE name = ? AND lastname = ? AND age = ? AND position = ? AND goalsNumber = ? AND teamid = ?";
+    public void createTeam(Team team) throws TeamAlreadyExistsException, DataAccessException {
+        String sql = "INSERT INTO soccerdb.teams(name, creationdate) VALUES (?, ?)";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
-            statement.setString(1, player.getName());
-            statement.setString(2, player.getLastname());
-            statement.setInt(3, player.getAge());
-            statement.setObject(4, player.getPosition().toString(), Types.OTHER);
-            statement.setInt(5, player.getGoalsNumber());
-            statement.setLong(6, getTeamId(player.getTeam()));
-            if (!playerExists(player)) {
-                throw new PlayerNotFoundException("El jugador que se ha intentado eliminar no existe en la base de datos.");
+            statement.setString(1, team.getName());
+            statement.setDate(2, new Date(team.getCreationdate().getTimeInMillis()));
+            if (teamExists(team)) {
+                throw new TeamAlreadyExistsException("El equipo que se ha intentado insertar ya existe en la base de datos.");
             } else {
                 statement.executeUpdate();
             }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al crear el equipo.");
+        }
+    }
+
+    @Override
+    public void deleteTeam(Team team) throws TeamNotFoundException, DataAccessException {
+        String sql = "DELETE FROM soccerdb.teams WHERE name = ?";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            statement.setString(1, team.getName());
+            statement.executeUpdate();
+            if (!teamExists(team)) {
+                throw new TeamNotFoundException("El equipo que se ha intentado eliminar no existe en la base de datos.");
+            } else {
+                statement.executeUpdate();
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al eliminar el equipo.");
+        }
+    }
+
+    @Override
+    public void deletePlayer(Player player) throws DataAccessException {
+        String sql = "DELETE FROM soccerdb.players WHERE id = ?";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            statement.setLong(1, getPlayerId(player.getName(), player.getLastname(), player.getAge()));
+            statement.executeUpdate();
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al eliminar al jugador.");
         }
@@ -79,20 +98,38 @@ public class SoccerDB implements SoccerDAO {
         }
     }
 
-    @Override // EDAD, POSICIÓN, GOLES, EQUIPO
-    public void updatePlayer(Player player, int newGoalsNumber, String newTeam) throws PlayerNotFoundException, DataAccessException {
-        String sql = "UPDATE soccerdb.players SET goalsNumber = ?, team = ? WHERE name = ? AND lastname = ? AND age = ? AND position = ?";
-        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
-            statement.setInt(1, newGoalsNumber);
-            statement.setString(2, newTeam);
-            statement.setString(3, player.getName());
-            statement.setString(4, player.getLastname());
-            statement.setInt(5, player.getAge());
-            statement.setObject(6, player.getPosition().toString(), Types.OTHER);
-            if (!playerExists(player)) {
-                throw new PlayerNotFoundException("El jugador que se ha intentado actualizar no existe en la base de datos.");
-            } else {
-                statement.executeUpdate();
+    @Override
+    public void updatePlayer(Player player, Team team, int newGoalsNumber) throws PlayerNotFoundException, DataAccessException {
+        if (!playerExists(player)) {
+            throw new PlayerNotFoundException("No se ha encontrado el jugador para actualizar.");
+        }
+
+        long playerId = getPlayerId(player.getName(), player.getLastname(), player.getAge());
+
+        if ((team == null || !teamExists(team)) && newGoalsNumber == 0) {
+            return;
+        }
+
+        try {
+            if (newGoalsNumber != 0) {
+                String sql = "UPDATE soccerdb.players SET goalsNumber = ? WHERE id = ?";
+                try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+                    statement.setInt(1, newGoalsNumber);
+                    statement.setLong(2, playerId);
+                    statement.executeUpdate();
+                }
+            }
+
+            // Actualizar equipo si es válido
+            if (team != null && teamExists(team)) {
+                String sql = "UPDATE soccerdb.players SET teamid = ? WHERE id = ?";
+                try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+                    statement.setLong(1, getTeamId(team.getName()));
+                    statement.setLong(2, playerId);
+                    statement.executeUpdate();
+                }
+            } else if (team != null && !teamExists(team)) {
+                throw new TeamNotFoundException("No se ha encontrado el equipo para asignar al jugador.");
             }
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al actualizar al jugador.");
@@ -117,7 +154,20 @@ public class SoccerDB implements SoccerDAO {
     }
 
     @Override
-    public long getTeamId(String name) throws DataAccessException {
+    public boolean teamExists(Team team) throws DataAccessException {
+        String sql = "SELECT name, creationdate FROM soccerdb.teams WHERE name = ? AND creationdate = ?";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            statement.setString(1, team.getName());
+            statement.setDate(2, new Date(team.getCreationdate().getTimeInMillis()));
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al leer el equipo.", exception);
+        }
+    }
+
+    @Override
+    public long getTeamId(String name) throws TeamNotFoundException, DataAccessException {
         String sql = "SELECT id FROM soccerdb.teams WHERE name = ?";
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setString(1, name);
@@ -125,8 +175,7 @@ public class SoccerDB implements SoccerDAO {
             if (resultSet.next()) {
                 return resultSet.getLong("id");
             } else {
-                // EXCEPCIÓN PERSONALIZADA BLABLA
-                return 0;
+                throw new TeamNotFoundException("No se encontro el id del team.");
             }
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al leer el id del equipo", exception);
@@ -168,7 +217,7 @@ public class SoccerDB implements SoccerDAO {
     // Leer todos los jugadores
     @Override
     public ArrayList<Player> readAllPlayers() throws DataAccessException {
-        String sql = "SELECT name, lastname, age, position, goalsNumber, team FROM soccerdb.players";
+        String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players";
         ArrayList<Player> players = new ArrayList<>();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -178,8 +227,8 @@ public class SoccerDB implements SoccerDAO {
                 int age = resultSet.getInt("age");
                 Positions position = Positions.valueOf(resultSet.getString("position"));
                 int goalsNumber = resultSet.getInt("goalsNumber");
-                String team = resultSet.getString("team");
-                players.add(new Player(name, lastname, age, position, goalsNumber, team));
+                String teamId = resultSet.getString("teamid");
+                players.add(new Player(name, lastname, age, position, goalsNumber, teamId));
             }
             return players;
         } catch (SQLException exception) {
@@ -453,15 +502,32 @@ public class SoccerDB implements SoccerDAO {
         }
     }
 
-    // Obtener la media de edad
     @Override
-    public double getAverageAge() {
+    public double getAverageAge() throws DataAccessException {
+        String sql = "SELECT AVG(age) FROM soccerdb.players";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble(1);
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Error al obtener los datos para el cálculo de la media de edad");
+        }
         return 0;
     }
 
     // Obtener la media de goles
     @Override
-    public double getAverageGoals() {
+    public double getAverageGoals() throws DataAccessException {
+        String sql = "SELECT AVG(goalsNumber) FROM soccerdb.players";
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble(1);
+            }
+        } catch (SQLException exception) {
+            throw new DataAccessException("Error al obtener los datos para el cálculo de la media de goles");
+        }
         return 0;
     }
 }
