@@ -9,7 +9,6 @@ import com.ephmos.SoccerApp.others.Positions;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 public class SoccerDB implements SoccerDAO {
     Database database;
@@ -185,7 +184,7 @@ public class SoccerDB implements SoccerDAO {
 
     // TERMINAR: Pensar en la lógica interna del método para realizar una comprobación específica.
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
-    @Override
+    /*@Override
     public TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber) throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, team FROM soccerdb.players WHERE 1=1";
 
@@ -211,6 +210,43 @@ public class SoccerDB implements SoccerDAO {
             return players;
         } catch (SQLException exception) {
             throw new DataAccessException("Ha ocurrido un error al buscar jugador.");
+        }
+    }*/
+    @Override
+    public ArrayList<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber)
+            throws DataAccessException {
+
+        String sql = "SELECT p.name, p.lastname, p.age, p.position, p.goalsNumber, t.name AS team FROM soccerdb.players p JOIN soccerdb.teams t ON p.teamid = t.id WHERE 1=1";
+
+        if (name != null && !name.trim().isEmpty())
+            sql += " AND p.name = '" + name + "'";
+        if (lastname != null && !lastname.trim().isEmpty())
+            sql += " AND p.lastname = '" + lastname + "'";
+        if (team != null && !team.trim().isEmpty())
+            sql += " AND t.name = '" + team + "'";
+        if (age > 0)
+            sql += " AND p.age = " + age;
+        if (position != null)
+            sql += " AND p.position = '" + position.name() + "'";
+        if (goalsNumber >= 0)
+            sql += " AND p.goalsNumber = " + goalsNumber;
+
+        ArrayList<Player> players = new ArrayList<>();
+
+        try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String pName = resultSet.getString("name");
+                String pLastname = resultSet.getString("lastname");
+                int pAge = resultSet.getInt("age");
+                Positions pPosition = Positions.valueOf(resultSet.getString("position"));
+                int pGoals = resultSet.getInt("goalsNumber");
+                String pTeam = resultSet.getString("team");
+                players.add(new Player(pName, pLastname, pAge, pPosition, pGoals, pTeam));
+            }
+            return players;
+        } catch (SQLException exception) {
+            throw new DataAccessException("Ha ocurrido un error al buscar jugador.", exception);
         }
     }
 
@@ -238,16 +274,16 @@ public class SoccerDB implements SoccerDAO {
 
     // Buscar el top goleadores
     @Override
-    public TreeSet<Player> findTopScorer() throws DataAccessException {
+    public ArrayList<Player> findTopScorer() throws DataAccessException {
         //consulta
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY goalsNumber DESC";
 
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
 
             //obetenemos los datos del jugador menos el nombre de equipo
-            while (resultSet.next()) {
+            if(resultSet.next()) {
                 String name = resultSet.getString("name");
                 String lastname = resultSet.getString("lastname");
                 int age = resultSet.getInt("age");
@@ -276,17 +312,17 @@ public class SoccerDB implements SoccerDAO {
 
     // Buscar el top goleadores por equipo
     @Override
-    public TreeSet<Player> findTopScorer(String team) throws DataAccessException {
+    public ArrayList<Player> findTopScorer(String team) throws DataAccessException {
         //llamamos al metodo de getTeamId
         long teamId = getTeamId(team);
         String sql = "SELECT name, lastname, age, position, goalsNumber FROM soccerdb.players WHERE teamid = ? ORDER BY goalsNumber DESC";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
 
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             statement.setLong(1, teamId);
             ResultSet resultSet = statement.executeQuery();
 
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 String name = resultSet.getString("name");
                 String lastname = resultSet.getString("lastname");
                 int age = resultSet.getInt("age");
@@ -303,10 +339,10 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por nombre
     @Override
-    public TreeSet<Player> sortByName() throws DataAccessException {
+    public ArrayList<Player> sortByName() throws DataAccessException {
 
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY name, lastname";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
 
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
@@ -339,9 +375,9 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por apellido
     @Override
-    public TreeSet<Player> sortByLastname() throws DataAccessException {
+    public ArrayList<Player> sortByLastname() throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY lastname, name";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -372,9 +408,9 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por edad
     @Override
-    public TreeSet<Player> sortByAge(boolean ascending) throws DataAccessException {
+    public ArrayList<Player> sortByAge(boolean ascending) throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY age, lastname";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -405,9 +441,9 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por posición
     @Override
-    public TreeSet<Player> sortByPosition() throws DataAccessException {
+    public ArrayList<Player> sortByPosition() throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY position, lastname";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -438,9 +474,9 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por goles
     @Override
-    public TreeSet<Player> sortByGoals(boolean ascending) throws DataAccessException {
+    public ArrayList<Player> sortByGoals(boolean ascending) throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY goalsnumber, lastname";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -471,9 +507,9 @@ public class SoccerDB implements SoccerDAO {
 
     // Ordenar por equipo
     @Override
-    public TreeSet<Player> sortByTeam() throws DataAccessException {
+    public ArrayList<Player> sortByTeam() throws DataAccessException {
         String sql = "SELECT name, lastname, age, position, goalsNumber, teamid FROM soccerdb.players ORDER BY teamid, lastname, name";
-        TreeSet players = new TreeSet();
+        ArrayList players = new ArrayList();
         try (PreparedStatement statement = database.getConnection().prepareStatement(sql)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {

@@ -5,8 +5,8 @@ import com.ephmos.SoccerApp.objects.Player;
 import com.ephmos.SoccerApp.objects.Team;
 import com.ephmos.SoccerApp.others.Positions;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public interface SoccerDAO {
     /**
@@ -38,25 +38,25 @@ public interface SoccerDAO {
     long getTeamId(String name) throws DataAccessException;
     // Para localizar un jugador por los parámetros especificados, en caso de no especificar uno no se tendrá en cuenta.
     //DataAccessException
-    TreeSet<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber) throws DataAccessException;
+    ArrayList<Player> findPlayer(String name, String lastname, String team, int age, Positions position, int goalsNumber) throws DataAccessException;
     //DataAccessException
     List<Player> readAllPlayers() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> findTopScorer() throws DataAccessException;
+    ArrayList<Player> findTopScorer() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> findTopScorer(String team) throws DataAccessException;
+    ArrayList<Player> findTopScorer(String team) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByName() throws DataAccessException;
+    ArrayList<Player> sortByName() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByLastname() throws DataAccessException;
+    ArrayList<Player> sortByLastname() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByAge(boolean ascending) throws DataAccessException;
+    ArrayList<Player> sortByAge(boolean ascending) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByPosition() throws DataAccessException;
+    ArrayList<Player> sortByPosition() throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByGoals(boolean ascending) throws DataAccessException;
+    ArrayList<Player> sortByGoals(boolean ascending) throws DataAccessException;
     //DataAccessException
-    TreeSet<Player> sortByTeam() throws DataAccessException;
+    ArrayList<Player> sortByTeam() throws DataAccessException;
     //DataAccessException
     double getAverageAge() throws DataAccessException;
     //DataAccessException

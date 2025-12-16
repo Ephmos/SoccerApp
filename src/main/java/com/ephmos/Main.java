@@ -6,7 +6,10 @@ import com.ephmos.SoccerApp.objects.Player;
 import com.ephmos.SoccerApp.objects.Team;
 import com.ephmos.SoccerApp.others.Positions;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.TreeSet;
 
 public class Main {
     public static void main(String[] args) throws DataAccessException {
@@ -38,7 +41,7 @@ public class Main {
         Player jugador23 = new Player("Mario", "Prieto", 27, Positions.DEF, 82, bcn.getName());
         Player jugador24 = new Player("Leonardo", "Campos", 22, Positions.GK, 77, bcn.getName());
         Player jugador25 = new Player("Alejandro", "Lorenzo", 25, Positions.FWD, 81, bcn.getName());
-        try {
+        /*try {
             soccerDB.createTeam(bcn);
             soccerDB.createTeam(rm);
             soccerDB.createPlayer(jugador1);
@@ -75,6 +78,23 @@ public class Main {
         } catch (DataAccessException exception) {
             exception.printStackTrace();
             throw new DataAccessException("Ha ocurrido un error durante la ejecución del programa.");
-        }
+        }*/
+        System.out.println("id Álvaro Gomez"+soccerDB.getPlayerId("Álvaro","Gomez",25));
+        System.out.println(soccerDB.playerExists(jugador2));
+        System.out.println(soccerDB.teamExists(bcn));
+        System.out.println(soccerDB.getTeamId("FC Barcelona"));
+        ArrayList<Player> jugadores = new ArrayList<>();
+        System.out.println(soccerDB.readAllPlayers());
+        System.out.println("RETORNO DE POL");
+        System.out.println(soccerDB.findPlayer("Pol","Lopez",bcn.getName(),27,Positions.DEF, 78));
+        System.out.println("TOP SCORER: ");
+        System.out.println(soccerDB.findTopScorer());
+        System.out.println(soccerDB.findTopScorer(bcn.getName()));
+        System.out.println("JUGADORES ORDENADOS  \n");
+        //System.out.println(soccerDB.sortByName());
+        //System.out.println(soccerDB.sortByAge(true));
+        //System.out.println(soccerDB.sortByLastname());
+        //System.out.println(soccerDB.sortByTeam());
+
     }
 }
